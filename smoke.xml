@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "http://testng.org/testng-1.0.dtd">
+<suite name="All Test Suite" parallel="tests" thread-count="3">
+    <test verbose="3" preserve-order="true" name="ChromeDriver1">
+        <parameter name="browser" value="chrome"></parameter>
+        <classes>
+            <class name="TestRunner.SmokeTest"></class>
+        </classes>
+    </test>
+
+
+<!--    <test verbose="3" preserve-order="true" name="ChromeDriver2">-->
+<!--        <parameter name="browser" value="dockerchrome"></parameter>-->
+<!--        <classes>-->
+<!--            <class name="TestRunner.SmokeTest"></class>-->
+<!--        </classes>-->
+<!--    </test>-->
+
+<!--    <test verbose="3" preserve-order="true" name="ChromeDriver3">-->
+<!--        <parameter name="browser" value="dockerchrome"></parameter>-->
+<!--        <classes>-->
+<!--            <class name="TestRunner.SmokeTest"></class>-->
+<!--        </classes>-->
+<!--    </test>-->
+<!--    <test verbose="3" preserve-order="true" name="ChromeDriver2">-->
+<!--        <parameter name="browser" value="gridchrome"></parameter>-->
+<!--        <classes>-->
+<!--            <class name="TestRunner.SmokeTest"></class>-->
+<!--        </classes>-->
+<!--    </test>-->
+
+<!--    <test verbose="3" preserve-order="true" name="ChromeDriver3">-->
+<!--        <parameter name="browser" value="gridchrome"></parameter>-->
+<!--        <classes>-->
+<!--            <class name="TestRunner.SmokeTest"></class>-->
+<!--        </classes>-->
+<!--    </test>-->
+
+<!--    <test verbose="3" preserve-order="true" name="ChromeDriver4">-->
+<!--        <parameter name="browser" value="gridchrome"></parameter>-->
+<!--        <classes>-->
+<!--            <class name="TestRunner.SmokeTest"></class>-->
+<!--        </classes>-->
+<!--    </test>-->
+
+<!--    <test verbose="3" preserve-order="true" name="ChromeDriver5">-->
+<!--        <parameter name="browser" value="gridchrome"></parameter>-->
+<!--        <classes>-->
+<!--            <class name="TestRunner.SmokeTest"></class>-->
+<!--        </classes>-->
+<!--    </test>-->
+
+
+<!--    <test verbose="3" preserve-order="true" name="ChromeDriver6">-->
+<!--        <parameter name="browser" value="gridchrome"></parameter>-->
+<!--        <classes>-->
+<!--            <class name="TestRunner.SmokeTest"></class>-->
+<!--        </classes>-->
+<!--    </test>-->
+
+
+<!--    <test verbose="3" preserve-order="true" name="EdgeDriver">-->
+<!--        <parameter name="browser" value="gridedge"></parameter>-->
+<!--        <classes>-->
+<!--            <class name="TestRunner.RegressionTest"></class>-->
+<!--        </classes>-->
+<!--    </test>-->
+
+<!--    <test verbose="3" preserve-order="true" name="FirefoxBrowser">-->
+<!--        <parameter name="browser" value="firefox"></parameter>-->
+<!--        <classes>-->
+<!--            <class name="TestRunner.RegressionTest"></class>-->
+<!--        </classes>-->
+<!--    </test>-->
+</suite>
