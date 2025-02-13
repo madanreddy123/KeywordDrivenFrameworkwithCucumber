@@ -33,27 +33,25 @@ e.printStackTrace();
 }
 }
 
-@Given("User executes test steps from {string} sheet in {string}")
-public void userExecutesTestStepsFromSheetIn(String arg0, String arg1) {
+@Given("User executes test steps from {string} sheet in {string} and record the test steps to the feature file {string} and the stepdefination as {string}")
+public void userExecutesTestStepsFromSheetInAndRecordTheTestStepsToTheFeatureFileAndTheStepdefinationAs(String arg0, String arg1, String arg2, String arg3) {
 
 String Data = PropertyReader.getFieldValue(arg1);
 File file = new File("./" + Data + "").getAbsoluteFile();
 String filepath = "";
 filepath += file;
 
+String propstepdefnitionfilepath = PropertyReader.getFieldValue(arg3);
+String propfeaturepath = PropertyReader.getFieldValue(arg2);
 
-File stepdefnitionfile = new File("./src/main/java/com/stepdefination/Keyworddrivensteps.java").getAbsoluteFile();
+File stepdefnitionfile = new File("./"+propstepdefnitionfilepath+"").getAbsoluteFile();
 String stepdefnitionfilefilepath = "";
 stepdefnitionfilefilepath += stepdefnitionfile;
 
 System.out.println("Executing test from Excel sheet: " + arg0 + " in file: " + Data);
 generalInformation.executeTest(Data, arg0);
-excelBDDReader.mapToFeatureFile(filepath, arg0, "src/test/resources/features/TC_003KeywordDrivenApproach.feature", stepdefnitionfilefilepath);
-
+excelBDDReader.mapToFeatureFile(filepath, arg0, propfeaturepath, stepdefnitionfilefilepath);
 }
-
-
-
 
 
 @Given("While filling the form, navigate to Testzen Labs Form to proceed with registration.")
@@ -92,14 +90,14 @@ public void tocompleteyourapplication_kindlyuploadresumeinthespecifiedformat_() 
 
 
 
-@Then("For gender identification, check the Male option if applicable.")
-public void forgenderidentification_checkthemaleoptionifapplicable_() {
+@Then("check the Male option if applicable.")
+public void checkthemaleoptionifapplicable_() {
 }
 
 
 
-@And("To enhance security, generate a random number for the pin code before submission.")
-public void toenhancesecurity_generatearandomnumberforthepincodebeforesubmission_() {
+@And("generate a random number for the pin code before submission.")
+public void generatearandomnumberforthepincodebeforesubmission_() {
 }
 
 
