@@ -5,7 +5,7 @@ public enum StepKeyword {
     CLICK("click on"),
     ENTER_TEXT("enter"),
     VERIFY_TEXT("should see"),
-    CHECKBOX("check"),
+    CHECKBOX("option"),
     SELECT_DROPDOWN("select"),
     UPLOAD_FILE("upload"),
     CUSTOM_ACTION("generate"),
@@ -27,6 +27,7 @@ public enum StepKeyword {
 
         for (StepKeyword keyword : values()) {
             if (!keyword.getPattern().isEmpty() && bddStep.contains(keyword.getPattern())) {
+                System.out.printf("Keyword which has been used from the step is: \"%s\"%n", keyword.getPattern());
                 return keyword;
             }
         }
