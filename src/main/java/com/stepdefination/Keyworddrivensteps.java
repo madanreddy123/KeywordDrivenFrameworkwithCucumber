@@ -16,91 +16,82 @@ import java.io.File;
 
 public class Keyworddrivensteps {
 
-ActionClass actions;
-ExcelBDDReader excelBDDReader;
-WebDriver driver;
-GeneralInformation generalInformation;
+    ActionClass actions;
+    ExcelBDDReader excelBDDReader;
+    WebDriver driver;
+    GeneralInformation generalInformation;
 
-public Keyworddrivensteps(DriverManager driverManager) {
-try {
-driver = driverManager.getDriver();
-generalInformation = new GeneralInformation(driver);
-excelBDDReader = new ExcelBDDReader();
-actions = new ActionClass(driver);
+    public Keyworddrivensteps(DriverManager driverManager) {
+        try {
+            driver = driverManager.getDriver();
+            generalInformation = new GeneralInformation(driver);
+            excelBDDReader = new ExcelBDDReader();
+            actions = new ActionClass(driver);
 
-} catch (Exception e) {
-e.printStackTrace();
-}
-}
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 
-@Given("User executes test steps from {string} sheet in {string} and record the test steps to the feature file {string} and the stepdefination as {string}")
-public void userExecutesTestStepsFromSheetInAndRecordTheTestStepsToTheFeatureFileAndTheStepdefinationAs(String arg0, String arg1, String arg2, String arg3) {
+    @Given("User executes test steps from {string} sheet in {string} and record the test steps to the feature file {string} and the stepdefination as {string}")
+    public void userExecutesTestStepsFromSheetInAndRecordTheTestStepsToTheFeatureFileAndTheStepdefinationAs(String arg0, String arg1, String arg2, String arg3) {
 
-String Data = PropertyReader.getFieldValue(arg1);
-File file = new File("./" + Data + "").getAbsoluteFile();
-String filepath = "";
-filepath += file;
+        String Data = PropertyReader.getFieldValue(arg1);
+        File file = new File("./" + Data + "").getAbsoluteFile();
+        String filepath = "";
+        filepath += file;
 
-String propstepdefnitionfilepath = PropertyReader.getFieldValue(arg3);
-String propfeaturepath = PropertyReader.getFieldValue(arg2);
+        String propstepdefnitionfilepath = PropertyReader.getFieldValue(arg3);
+        String propfeaturepath = PropertyReader.getFieldValue(arg2);
 
-File stepdefnitionfile = new File("./"+propstepdefnitionfilepath+"").getAbsoluteFile();
-String stepdefnitionfilefilepath = "";
-stepdefnitionfilefilepath += stepdefnitionfile;
+        File stepdefnitionfile = new File("./" + propstepdefnitionfilepath + "").getAbsoluteFile();
+        String stepdefnitionfilefilepath = "";
+        stepdefnitionfilefilepath += stepdefnitionfile;
 
-System.out.println("Executing test from Excel sheet: " + arg0 + " in file: " + Data);
-generalInformation.executeTest(Data, arg0);
-excelBDDReader.mapToFeatureFile(filepath, arg0, propfeaturepath, stepdefnitionfilefilepath);
-}
-
-
-
-	@Given("While filling the form navigate to Testzen Labs Form to proceed with registration")
-public void whilefillingtheformnavigatetotestzenlabsformtoproceedwithregistration() {
-}
+        System.out.println("Executing test from Excel sheet: " + arg0 + " in file: " + Data);
+        generalInformation.executeTest(Data, arg0);
+        excelBDDReader.mapToFeatureFile(filepath, arg0, propfeaturepath, stepdefnitionfilefilepath);
+    }
 
 
-
-	@When("you correctly enter First Name before moving to the next field")
-public void youcorrectlyenterfirstnamebeforemovingtothenextfield() {
-}
-
+    @Given("While filling the form navigate to Testzen Labs Form to proceed with registration")
+    public void whilefillingtheformnavigatetotestzenlabsformtoproceedwithregistration() {
+    }
 
 
-	@And("You should carefully enter Last Name so that it matches your official documents")
-public void youshouldcarefullyenterlastnamesothatitmatchesyourofficialdocuments() {
-}
+    @When("you correctly enter First Name before moving to the next field")
+    public void youcorrectlyenterfirstnamebeforemovingtothenextfield() {
+    }
 
 
-
-	@And("Before proceeding further make sure to enter Phone Number to receive OTP verification")
-public void beforeproceedingfurthermakesuretoenterphonenumbertoreceiveotpverification() {
-}
-
+    @And("You should carefully enter Last Name so that it matches your official documents")
+    public void youshouldcarefullyenterlastnamesothatitmatchesyourofficialdocuments() {
+    }
 
 
-	@Then("In the form select Country from the dropdown list to specify your nationality")
-public void intheformselectcountryfromthedropdownlisttospecifyyournationality() {
-}
+    @And("Before proceeding further make sure to enter Phone Number to receive OTP verification")
+    public void beforeproceedingfurthermakesuretoenterphonenumbertoreceiveotpverification() {
+    }
 
 
-
-	@And("To complete your application kindly upload Resume in the specified format")
-public void tocompleteyourapplicationkindlyuploadresumeinthespecifiedformat() {
-}
-
+    @Then("In the form select Country from the dropdown list to specify your nationality")
+    public void intheformselectcountryfromthedropdownlisttospecifyyournationality() {
+    }
 
 
-	@Then("check the Male option if applicable")
-public void checkthemaleoptionifapplicable() {
-}
+    @And("To complete your application kindly upload Resume in the specified format")
+    public void tocompleteyourapplicationkindlyuploadresumeinthespecifiedformat() {
+    }
 
 
+    @Then("check the Male option if applicable")
+    public void checkthemaleoptionifapplicable() {
+    }
 
-	@And("generate a random number for the pin code before submission")
-public void generatearandomnumberforthepincodebeforesubmission() {
-}
 
+    @And("generate a random number for the pin code before submission")
+    public void generatearandomnumberforthepincodebeforesubmission() {
+    }
 
 
 }
