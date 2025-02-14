@@ -54,50 +54,51 @@ excelBDDReader.mapToFeatureFile(filepath, arg0, propfeaturepath, stepdefnitionfi
 }
 
 
-@Given("While filling the form, navigate to Testzen Labs Form to proceed with registration.")
-public void whilefillingtheform_navigatetotestzenlabsformtoproceedwithregistration_() {
+
+	@Given("While filling the form navigate to Testzen Labs Form to proceed with registration")
+public void whilefillingtheformnavigatetotestzenlabsformtoproceedwithregistration() {
 }
 
 
 
-@When("Please ensure you correctly enter First Name before moving to the next field.")
-public void pleaseensureyoucorrectlyenterfirstnamebeforemovingtothenextfield_() {
+	@When("you correctly enter First Name before moving to the next field")
+public void youcorrectlyenterfirstnamebeforemovingtothenextfield() {
 }
 
 
 
-@And("You should carefully enter Last Name so that it matches your official documents.")
-public void youshouldcarefullyenterlastnamesothatitmatchesyourofficialdocuments_() {
+	@And("You should carefully enter Last Name so that it matches your official documents")
+public void youshouldcarefullyenterlastnamesothatitmatchesyourofficialdocuments() {
 }
 
 
 
-@And("Before proceeding further, make sure to enter Phone Number to receive OTP verification.")
-public void beforeproceedingfurther_makesuretoenterphonenumbertoreceiveotpverification_() {
+	@And("Before proceeding further make sure to enter Phone Number to receive OTP verification")
+public void beforeproceedingfurthermakesuretoenterphonenumbertoreceiveotpverification() {
 }
 
 
 
-@Then("In the form, select Country from the dropdown list to specify your nationality.")
-public void intheform_selectcountryfromthedropdownlisttospecifyyournationality_() {
+	@Then("In the form select Country from the dropdown list to specify your nationality")
+public void intheformselectcountryfromthedropdownlisttospecifyyournationality() {
 }
 
 
 
-@And("To complete your application, kindly upload Resume in the specified format.")
-public void tocompleteyourapplication_kindlyuploadresumeinthespecifiedformat_() {
+	@And("To complete your application kindly upload Resume in the specified format")
+public void tocompleteyourapplicationkindlyuploadresumeinthespecifiedformat() {
 }
 
 
 
-@Then("check the Male option if applicable.")
-public void checkthemaleoptionifapplicable_() {
+	@Then("check the Male option if applicable")
+public void checkthemaleoptionifapplicable() {
 }
 
 
 
-@And("generate a random number for the pin code before submission.")
-public void generatearandomnumberforthepincodebeforesubmission_() {
+	@And("generate a random number for the pin code before submission")
+public void generatearandomnumberforthepincodebeforesubmission() {
 }
 
 

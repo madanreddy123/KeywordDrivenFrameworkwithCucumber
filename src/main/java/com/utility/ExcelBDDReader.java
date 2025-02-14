@@ -64,7 +64,7 @@ public class ExcelBDDReader {
                 if (scenarioTitle != null && !scenarioTitle.isEmpty() && bddStep != null && !bddStep.isEmpty()) {
                     scenarioTitle = scenarioTitle.trim();
                     bddStep = bddStep.trim();
-                    bddStep = bddStep.replaceAll("[\"']", "");
+                    bddStep = bddStep.replaceAll("[\"'0-9$#@!^%&*\\[\\]():{}<>,.;|]", "").trim();
 
                     // Add scenario to feature file (if not already present)
                     String scenarioLine = "Scenario: " + scenarioTitle;
@@ -133,7 +133,7 @@ public class ExcelBDDReader {
         String sanitizedStep = bddStep.replaceAll("(?i)^(Given|When|Then|And)\\s*", "").trim();
 
         // Remove single and double quotes, and any non-alphabetic characters except spaces
-        sanitizedStep = sanitizedStep.replaceAll("[\"'\\s]", "").replaceAll("[^a-zA-Z]", "_").toLowerCase();
+        sanitizedStep = sanitizedStep.replaceAll("[\"'0-9$#@!^%&*\\[\\]:{}<>,.;|\\s]", "").trim().replaceAll("[^a-zA-Z]", "_").toLowerCase();
 
         return sanitizedStep;
     }
