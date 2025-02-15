@@ -5,8 +5,7 @@ Feature: Automate Testzen Labs Form two
 
 
     Given User executes test steps from "General" sheet in "excelDatatwo" and record the test steps to the feature file "featurefiletwo" and the stepdefination as "Stepdefination"
-
-
+    
 Given While filling the form navigate to Testzen Labs Form to proceed with registration
 When you correctly enter First Name before moving to the next field
 And You should carefully enter Last Name so that it matches your official documents
