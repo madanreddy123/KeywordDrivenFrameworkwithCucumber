@@ -1,10 +1,11 @@
 Feature: Automate Testzen Labs Form
 
-  @keyword
-  Scenario: Fill out the General Information Form
+@keyword
+Scenario: Fill out the General Information Form
 
 
-    Given User executes test steps from "General" sheet in "excelData" and record the test steps to the feature file "featurefile" and the stepdefination as "Stepdefination"
+Given User executes test steps from "General" sheet in "excelData" and record the test steps to the feature file "featurefile" and the stepdefination as "Stepdefination"
+
 
 Given  While 1 filling the form navigate to Testzen Labs Form to proceed with registration
 When you correctly enter First Name before moving to the next field
