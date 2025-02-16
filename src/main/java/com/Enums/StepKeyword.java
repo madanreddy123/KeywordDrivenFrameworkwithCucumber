@@ -6,8 +6,8 @@ import java.util.Arrays;
 
 public enum StepKeyword {
     NAVIGATE("navigate"),
-    CLICK("click to"),
-    ENTER_TEXT("enter the"),
+    CLICK("click"),
+    ENTER_TEXT("enter"),
     VERIFY_TEXT("should see"),
     CHECKBOX("check"),
     SELECT_DROPDOWN("select"),
@@ -65,7 +65,7 @@ public enum StepKeyword {
                 })
                 .findFirst()
                 .map(keyword -> {
-                    System.out.printf("Keyword which has been used from the step is: \"%s\"%n", keyword.getPattern());
+                    System.out.printf("Keyword used from the step : \"%s\"%n", keyword.getPattern());
                     return keyword;
                 })
                 .orElse(UNKNOWN);  // If no match found
