@@ -23,12 +23,19 @@ public enum StepKeyword {
     }
 
     public static StepKeyword fromBDDStep(String bddStep) {
-        bddStep = bddStep.toLowerCase();
+        bddStep = bddStep.toLowerCase();  // Convert to lower case for case-insensitive comparison
+
+        // Extract the action part (for example, "navigate to" from the full sentence)
+        String[] words = bddStep.split(" ");
+        String action = words.length > 1 ? words[1] : "";  // Check if there's an action word
 
         for (StepKeyword keyword : values()) {
-            if (!keyword.getPattern().isEmpty() && bddStep.contains(keyword.getPattern())) {
-                System.out.printf("Keyword which has been used from the step is: \"%s\"%n", keyword.getPattern());
-                return keyword;
+            if (!keyword.getPattern().isEmpty()) {
+                // Check if the BDD step contains the keyword pattern or action
+                if (bddStep.contains(keyword.getPattern()) || action.contains(keyword.getPattern())) {
+                    System.out.printf("Keyword which has been used from the step is: \"%s\"%n", keyword.getPattern());
+                    return keyword;
+                }
             }
         }
         return UNKNOWN;
