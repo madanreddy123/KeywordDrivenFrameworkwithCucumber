@@ -43,6 +43,10 @@ public class Keyworddrivensteps {
         filepath += file;
 
         String propstepdefnitionfilepath = PropertyReader.getFieldValue(arg3);
+        String propstepdefnitionfolderfilepath = "";
+
+        propstepdefnitionfolderfilepath+=  new File("src/main/java/com/stepdefination").getAbsoluteFile();
+
         String propfeaturepath = PropertyReader.getFieldValue(arg2);
 
         File stepdefnitionfile = new File("./" + propstepdefnitionfilepath + "").getAbsoluteFile();
@@ -50,54 +54,8 @@ public class Keyworddrivensteps {
         stepdefnitionfilefilepath += stepdefnitionfile;
 
         System.out.println("Executing test from Excel sheet: " + arg0 + " in file: " + Data);
-//generalInformation.executeTest(Data, arg0);
-        excelBDDReader.mapToFeatureFile(filepath, arg0, propfeaturepath, stepdefnitionfilefilepath);
+        //generalInformation.executeTest(Data, arg0);
+        excelBDDReader.mapToFeatureFile(filepath, arg0, propfeaturepath, propstepdefnitionfolderfilepath, stepdefnitionfilefilepath);
     }
-
-
-    @Given("While 1 filling the form navigate to Testzen Labs Form to proceed with registration")
-    public void while_fillingtheformnavigatetotestzenlabsformtoproceedwithregistration() {
-    }
-
-
-    @When("you correctly enter First Name before moving to the next field")
-    public void youcorrectlyenterfirstnamebeforemovingtothenextfield() {
-    }
-
-
-    @And("You should carefully enter Last Name so that it matches your official documents")
-    public void youshouldcarefullyenterlastnamesothatitmatchesyourofficialdocuments() {
-    }
-
-
-    @And("Before proceeding further make sure to enter Phone Number to receive OTP verification")
-    public void beforeproceedingfurthermakesuretoenterphonenumbertoreceiveotpverification() {
-    }
-
-
-    @Then("In the form select Country from the dropdown list to specify your nationality")
-    public void intheformselectcountryfromthedropdownlisttospecifyyournationality() {
-    }
-
-
-    @And("To complete your application kindly upload Resume in the specified format")
-    public void tocompleteyourapplicationkindlyuploadresumeinthespecifiedformat() {
-    }
-
-
-    @Then("check the Male option if applicable")
-    public void checkthemaleoptionifapplicable() {
-    }
-
-
-    @And("generate a random number for the pin code before submission")
-    public void generatearandomnumberforthepincodebeforesubmission() {
-    }
-
-
-    @Given("While filling the form navigate to Testzen Labs Form to proceed with registration")
-    public void whilefillingtheformnavigatetotestzenlabsformtoproceedwithregistration() {
-    }
-
 
 }

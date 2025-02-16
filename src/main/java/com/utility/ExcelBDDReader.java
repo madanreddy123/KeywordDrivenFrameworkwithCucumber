@@ -1,11 +1,14 @@
 package com.utility;
 
-import java.io.*;
-import java.util.*;
 import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 
+import java.io.*;
+import java.util.*;
+import java.util.regex.*;
+
 public class ExcelBDDReader {
-    public void mapToFeatureFile(String filePath, String excelSheetName, String outputFeatureFilePath, String stepDefFilePath) {
+
+    public void mapToFeatureFile(String filePath, String excelSheetName, String outputFeatureFilePath, String stepDefFolderPath, String newStepDefClassPath) {
         System.out.println("Started updating feature file and step definitions.");
 
         List<Map<String, String>> excelData;
@@ -31,31 +34,31 @@ public class ExcelBDDReader {
                 }
             }
 
-            // Read existing step definition file content (if any)
-            File stepDefFile = new File(stepDefFilePath);
-            StringBuilder stepDefFileContent = new StringBuilder();
+            // Step 1: Read all classes in the specified folder
+            Set<String> existingStepDefinitions = new HashSet<>();
+            File stepDefFolder = new File(stepDefFolderPath);
 
-            if (stepDefFile.exists()) {
-                try (BufferedReader reader = new BufferedReader(new FileReader(stepDefFile))) {
-                    String line;
-                    while ((line = reader.readLine()) != null) {
-                        stepDefFileContent.append(line.trim()).append("\n");
+            if (stepDefFolder.exists() && stepDefFolder.isDirectory()) {
+                // Get all .java files in the directory (and subdirectories)
+                File[] stepDefFiles = stepDefFolder.listFiles((dir, name) -> name.endsWith(".java"));
+
+                if (stepDefFiles != null) {
+                    for (File stepDefFile : stepDefFiles) {
+                        // Extract method names from each step definition class
+                        extractMethodNamesFromClass(stepDefFile, existingStepDefinitions);
                     }
                 }
+            } else {
+                System.out.println("Invalid folder path for step definitions.");
+                return;
             }
 
-            // Find the position of the last '}' (closing brace)
-            int lastBraceIndex = stepDefFileContent.lastIndexOf("}");
-
-            // Prepare to update feature file and generate step definitions
+            // Prepare to update feature file and generate new step definitions
             StringBuilder featureContent = new StringBuilder();
-            StringBuilder stepDefContent = new StringBuilder();
-            boolean classStarted = false;  // Track if the class block is opened
+            boolean classStarted = false;
 
-            // Track added step definitions
-            Set<String> addedStepDefinitions = new HashSet<>();
-
-            // Go through each row of Excel data
+            // Go through each row of Excel data and update the feature and step definition files
+            StringBuilder stepDefFileContent = new StringBuilder();
             for (Map<String, String> rowData : excelData) {
                 String scenarioTitle = rowData.get("Scenario");
                 String bddStep = rowData.get("BDD Steps");
@@ -80,28 +83,15 @@ public class ExcelBDDReader {
                     String methodName = generateMethodName(bddStep);
                     String stepDefMethod = generateStepDefMethod(bddStep, methodName);
 
-                    // Check if the step definition method already exists in the step definition file
-                    if (!stepDefFileContent.toString().contains(stepDefMethod)) {
-                        // Add this step definition to the set of added step definitions
-                        if (addedStepDefinitions.add(stepDefMethod)) {
-                            // Check if class definition is already present
-                            if (!classStarted) {
-                                // Add class definition if it's not there yet
-                                stepDefContent.append("\n\n");
-                                classStarted = true;  // Mark class as started
-                            }
+                    // Check if the step definition method already exists in any class
+                    if (!existingStepDefinitions.contains(methodName.toLowerCase())) {
+                        // Add method to the new step definition class content
+                        stepDefFileContent.append("\t").append(stepDefMethod).append("\n\n");
 
-                            // Add the step definition method inside the class
-                            stepDefContent.append("\t").append(stepDefMethod).append("\n\n");
-                        }
+                        // Track this method as added
+                        existingStepDefinitions.add(methodName.toLowerCase());  // Add to the set of existing methods
                     }
                 }
-            }
-
-            // Ensure the last '}' is correctly placed after adding methods
-            if (lastBraceIndex != -1) {
-                // Insert the new step definitions just before the last '}' in the step definition file
-                stepDefFileContent.insert(lastBraceIndex, stepDefContent.toString());
             }
 
             // Write updated content to the feature file (if any new content is generated)
@@ -114,18 +104,70 @@ public class ExcelBDDReader {
                 System.out.println("No new steps to add to the feature file.");
             }
 
-            // Write only new step definitions to the step definition file
-            if (stepDefContent.length() > 0) {
-                try (FileWriter writer = new FileWriter(stepDefFilePath)) { // Overwrite the file
-                    writer.write(stepDefFileContent.toString());
+            // Step 2: If there are new step definitions, write them to the new class
+            if (stepDefFileContent.length() > 0) {
+                File newStepDefFile = new File(newStepDefClassPath);
+                if (!newStepDefFile.exists()) {
+                    // Create the new file if it doesn't exist
+                    newStepDefFile.createNewFile();
                 }
-                System.out.println("New step definition methods added successfully to: " + stepDefFilePath);
+
+                // Read the existing content of the step definition class
+                StringBuilder classContent = new StringBuilder();
+                try (BufferedReader reader = new BufferedReader(new FileReader(newStepDefFile))) {
+                    String line;
+                    boolean classBodyStarted = false;
+                    boolean classBodyEnded = false;
+
+                    while ((line = reader.readLine()) != null) {
+                        classContent.append(line).append("\n");
+
+                        // Check if the class body has started and ended
+                        if (line.contains("class")) {
+                            classBodyStarted = true;
+                        }
+                        if (classBodyStarted && line.contains("}")) {
+                            classBodyEnded = true;
+                            break;  // Stop once we hit the closing brace of the class
+                        }
+                    }
+
+                    // If class body ended, add the new methods before the closing brace
+                    if (classBodyEnded) {
+                        int lastIndexOfClassEnd = classContent.lastIndexOf("}");
+                        classContent.insert(lastIndexOfClassEnd, stepDefFileContent.toString());
+                    }
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+                // Write the updated class content back to the file
+                try (FileWriter writer = new FileWriter(newStepDefFile)) {
+                    writer.write(classContent.toString());
+                }
+                System.out.println("New step definition methods added successfully to: " + newStepDefClassPath);
             } else {
                 System.out.println("No new step definitions to add.");
             }
 
-        } catch (InvalidFormatException | IOException e) {
+        } catch (IOException | InvalidFormatException e) {
             e.printStackTrace();
+        }
+    }
+
+    // Method to extract method names from the given step definition class file
+    private void extractMethodNamesFromClass(File classFile, Set<String> existingStepDefinitions) throws IOException {
+        try (BufferedReader reader = new BufferedReader(new FileReader(classFile))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                // Use regex to find method names in the form of "public void methodName()"
+                Matcher matcher = Pattern.compile("public void (\\w+)\\(\\)").matcher(line);
+                if (matcher.find()) {
+                    String methodName = matcher.group(1);
+                    existingStepDefinitions.add(methodName.toLowerCase()); // Track methods in lowercase for case-insensitive comparison
+                }
+            }
         }
     }
 
@@ -159,7 +201,11 @@ public class ExcelBDDReader {
             return "Then";
         } else if (bddStep.toLowerCase().startsWith("and")) {
             return "And";
-        } else {
+        }
+        else if (bddStep.toLowerCase().startsWith("but")) {
+        return "But";
+    }
+    else {
             return "Given";  // Default to Given if no match
         }
     }

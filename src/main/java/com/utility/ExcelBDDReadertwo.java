@@ -1,12 +1,8 @@
 package com.utility;
 
-import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
-
 import java.io.*;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
+import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 
 public class ExcelBDDReadertwo {
     public void mapToFeatureFile(String filePath, String excelSheetName, String outputFeatureFilePath, String stepDefFilePath) {
