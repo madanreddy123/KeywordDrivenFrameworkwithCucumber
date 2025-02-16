@@ -98,7 +98,11 @@ public class GeneralInformation {
                             break;
 
                         default:
-                            System.out.println("⚠️ Unrecognized step: " + bddStep);
+                            if (bddStep.isEmpty()) {
+                                continue;
+                            } else {
+                                System.out.println("⚠️ Unrecognized step: " + bddStep);
+                            }
                             break;
                     }
                 } catch (NoSuchElementException e) {

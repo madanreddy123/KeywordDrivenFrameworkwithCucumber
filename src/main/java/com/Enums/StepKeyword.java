@@ -1,11 +1,15 @@
 package com.Enums;
 
+import org.tartarus.snowball.ext.EnglishStemmer;
+
+import java.util.Arrays;
+
 public enum StepKeyword {
-    NAVIGATE("navigate to"),
-    CLICK("click on"),
-    ENTER_TEXT("enter"),
+    NAVIGATE("navigate"),
+    CLICK("click to"),
+    ENTER_TEXT("enter the"),
     VERIFY_TEXT("should see"),
-    CHECKBOX("option"),
+    CHECKBOX("check"),
     SELECT_DROPDOWN("select"),
     UPLOAD_FILE("upload"),
     CUSTOM_ACTION("generate"),
@@ -23,21 +27,51 @@ public enum StepKeyword {
     }
 
     public static StepKeyword fromBDDStep(String bddStep) {
-        bddStep = bddStep.toLowerCase();  // Convert to lower case for case-insensitive comparison
+        bddStep = bddStep.trim().toLowerCase();  // Normalize by trimming and converting to lower case
 
-        // Extract the action part (for example, "navigate to" from the full sentence)
+        // Remove extra spaces between words by replacing multiple spaces with a single space
+        bddStep = bddStep.replaceAll("\\s+", " ");
+
+        // Normalize common spelling mistakes (like repeated letters) in BDD step
+        bddStep = normalizeSpellingMistakes(bddStep);
+
+        // Create a Snowball Stemmer for English
+        EnglishStemmer stemmer = new EnglishStemmer();
+
+        // Apply stemming to BDD step to handle variations
         String[] words = bddStep.split(" ");
-        String action = words.length > 1 ? words[1] : "";  // Check if there's an action word
+        words = Arrays.stream(words)
+                .map(word -> {
+                    stemmer.setCurrent(word);
+                    stemmer.stem();
+                    return stemmer.getCurrent();  // Apply stemming to each word
+                })
+                .toArray(String[]::new);
 
-        for (StepKeyword keyword : values()) {
-            if (!keyword.getPattern().isEmpty()) {
-                // Check if the BDD step contains the keyword pattern or action
-                if (bddStep.contains(keyword.getPattern()) || action.contains(keyword.getPattern())) {
+        // Rebuild the BDD step after stemming
+        bddStep = String.join(" ", words);
+
+        // Use stream to check the keyword match
+        String finalBddStep = bddStep;
+        return Arrays.stream(values())
+                .filter(keyword -> !keyword.getPattern().isEmpty())
+                .filter(keyword -> {
+                    // Get the keyword pattern and stem it
+                    stemmer.setCurrent(keyword.getPattern().toLowerCase());
+                    stemmer.stem();
+                    String stemmedKeyword = stemmer.getCurrent();
+                    // Check if the stemmed keyword matches part of the stemmed BDD step
+                    return finalBddStep.contains(stemmedKeyword);
+                })
+                .findFirst()
+                .map(keyword -> {
                     System.out.printf("Keyword which has been used from the step is: \"%s\"%n", keyword.getPattern());
                     return keyword;
-                }
-            }
-        }
-        return UNKNOWN;
+                })
+                .orElse(UNKNOWN);  // If no match found
+    }
+
+    private static String normalizeSpellingMistakes(String input) {
+        return input.replaceAll("(.)\\1*", "$1");  // This will remove all instances of repeated characters
     }
 }
