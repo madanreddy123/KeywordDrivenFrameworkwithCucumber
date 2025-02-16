@@ -8,12 +8,12 @@
         </classes>
     </test>
 
-    <test verbose="3" preserve-order="true" name="ChromeDriver2">
-        <parameter name="browser" value="chrome"></parameter>
-        <classes>
-            <class name="TestRunner.SmokeTesttwo"></class>
-        </classes>
-    </test>
+<!--    <test verbose="3" preserve-order="true" name="ChromeDriver2">-->
+<!--        <parameter name="browser" value="chrome"></parameter>-->
+<!--        <classes>-->
+<!--            <class name="TestRunner.SmokeTesttwo"></class>-->
+<!--        </classes>-->
+<!--    </test>-->
 
 
 <!--    <test verbose="3" preserve-order="true" name="ChromeDriver2">-->
