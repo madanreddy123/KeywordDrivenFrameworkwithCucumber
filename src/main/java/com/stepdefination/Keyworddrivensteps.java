@@ -55,7 +55,7 @@ public class Keyworddrivensteps {
 
         System.out.println("Executing test from Excel sheet: " + arg0 + " in file: " + Data);
         generalInformation.executeTest(Data, arg0);
-        excelBDDReader.mapToFeatureFile(filepath, arg0, propfeaturepath, propstepdefnitionfolderfilepath, stepdefnitionfilefilepath);
+       // excelBDDReader.mapToFeatureFile(filepath, arg0, propfeaturepath, propstepdefnitionfolderfilepath, stepdefnitionfilefilepath);
     }
 
 }
