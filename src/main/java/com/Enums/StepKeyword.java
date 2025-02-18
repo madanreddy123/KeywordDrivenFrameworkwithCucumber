@@ -1,8 +1,13 @@
 package com.Enums;
 
+import org.languagetool.JLanguageTool;
+import org.languagetool.language.AmericanEnglish;
+import org.languagetool.rules.RuleMatch;
 import org.tartarus.snowball.ext.EnglishStemmer;
 
+import java.io.IOException;
 import java.util.Arrays;
+import java.util.List;
 
 public enum StepKeyword {
     NAVIGATE("navigate"),
@@ -27,48 +32,70 @@ public enum StepKeyword {
     }
 
     public static StepKeyword fromBDDStep(String bddStep) {
-        bddStep = bddStep.trim().toLowerCase();  // Normalize by trimming and converting to lower case
+        bddStep = bddStep.trim().toLowerCase(); // Normalize case and trim spaces
 
-        // Remove extra spaces between words by replacing multiple spaces with a single space
+        // Correct spelling mistakes using LanguageTool
+        try {
+            bddStep = correctSpelling(bddStep);
+        } catch (IOException e) {
+            System.err.println("Error in spell checking: " + e.getMessage());
+        }
+
+        // Remove extra spaces
         bddStep = bddStep.replaceAll("\\s+", " ");
 
-        // Normalize common spelling mistakes (like repeated letters) in BDD step
+        // Normalize repeated characters (e.g., "cliiick" → "click")
         bddStep = normalizeSpellingMistakes(bddStep);
 
-        // Create a Snowball Stemmer for English
+        // Apply stemming
         EnglishStemmer stemmer = new EnglishStemmer();
-
-        // Apply stemming to BDD step to handle variations
         String[] words = bddStep.split(" ");
         words = Arrays.stream(words)
                 .map(word -> {
                     stemmer.setCurrent(word);
                     stemmer.stem();
-                    return stemmer.getCurrent();  // Apply stemming to each word
+                    return stemmer.getCurrent();
                 })
                 .toArray(String[]::new);
-
-        // Rebuild the BDD step after stemming
         bddStep = String.join(" ", words);
 
-        // Use stream to check the keyword match
+        // Match the keyword
         String finalBddStep = bddStep;
         return Arrays.stream(values())
                 .filter(keyword -> !keyword.getPattern().isEmpty())
                 .filter(keyword -> {
-                    // Get the keyword pattern and stem it
+                    // Stem the keyword
                     stemmer.setCurrent(keyword.getPattern().toLowerCase());
                     stemmer.stem();
                     String stemmedKeyword = stemmer.getCurrent();
-                    // Check if the stemmed keyword matches part of the stemmed BDD step
+
+                    // Check if it matches
                     return finalBddStep.contains(stemmedKeyword);
                 })
                 .findFirst()
-                .map(keyword -> {
-                    System.out.printf("Keyword used from the step : \"%s\"%n", keyword.getPattern());
-                    return keyword;
-                })
-                .orElse(UNKNOWN);  // If no match found
+                .orElse(UNKNOWN);
+    }
+
+    // Method to correct spelling errors using LanguageTool
+    private static String correctSpelling(String input) throws IOException {
+        JLanguageTool langTool = new JLanguageTool(new AmericanEnglish());
+        List<RuleMatch> matches = langTool.check(input);
+
+        StringBuilder correctedText = new StringBuilder(input);
+        int offset = 0;
+
+        for (RuleMatch match : matches) {
+            List<String> suggestions = match.getSuggestedReplacements();
+            if (!suggestions.isEmpty()) {
+                String suggestion = suggestions.get(0); // Take the first suggestion
+                int start = match.getFromPos() + offset;
+                int end = match.getToPos() + offset;
+                correctedText.replace(start, end, suggestion);
+                offset += suggestion.length() - (end - start);
+            }
+        }
+
+        return correctedText.toString();
     }
 
     private static String normalizeSpellingMistakes(String input) {
