@@ -8,8 +8,6 @@ import org.tartarus.snowball.ext.EnglishStemmer;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
-import java.util.HashMap;
-import java.util.Map;
 
 public enum StepKeyword {
     NAVIGATE("navigate"),
@@ -25,10 +23,6 @@ public enum StepKeyword {
 
     private final String keywordPattern;
 
-    private static final JLanguageTool langTool = new JLanguageTool(new AmericanEnglish());
-    private static final EnglishStemmer stemmer = new EnglishStemmer();
-    private static final Map<String, String> spellingCache = new HashMap<>(); // Cache for spelling corrected strings
-
     StepKeyword(String keywordPattern) {
         this.keywordPattern = keywordPattern;
     }
@@ -40,7 +34,7 @@ public enum StepKeyword {
     public static StepKeyword fromBDDStep(String bddStep) {
         bddStep = bddStep.trim().toLowerCase(); // Normalize case and trim spaces
 
-        // Correct spelling mistakes using LanguageTool (with caching)
+        // Correct spelling mistakes using LanguageTool
         try {
             bddStep = correctSpelling(bddStep);
         } catch (IOException e) {
@@ -53,10 +47,17 @@ public enum StepKeyword {
         // Normalize repeated characters (e.g., "cliiick" → "click")
         bddStep = normalizeSpellingMistakes(bddStep);
 
-        // Apply stemming only if necessary (skip for smaller strings)
-        if (bddStep.length() > 5) {
-            bddStep = applyStemming(bddStep);
-        }
+        // Apply stemming
+        EnglishStemmer stemmer = new EnglishStemmer();
+        String[] words = bddStep.split(" ");
+        words = Arrays.stream(words)
+                .map(word -> {
+                    stemmer.setCurrent(word);
+                    stemmer.stem();
+                    return stemmer.getCurrent();
+                })
+                .toArray(String[]::new);
+        bddStep = String.join(" ", words);
 
         // Match the keyword
         String finalBddStep = bddStep;
@@ -64,7 +65,10 @@ public enum StepKeyword {
                 .filter(keyword -> !keyword.getPattern().isEmpty())
                 .filter(keyword -> {
                     // Stem the keyword
-                    String stemmedKeyword = applyStemming(keyword.getPattern().toLowerCase());
+                    stemmer.setCurrent(keyword.getPattern().toLowerCase());
+                    stemmer.stem();
+                    String stemmedKeyword = stemmer.getCurrent();
+
                     // Check if it matches
                     return finalBddStep.contains(stemmedKeyword);
                 })
@@ -72,12 +76,9 @@ public enum StepKeyword {
                 .orElse(UNKNOWN);
     }
 
-    // Method to correct spelling errors using LanguageTool with caching
+    // Method to correct spelling errors using LanguageTool
     private static String correctSpelling(String input) throws IOException {
-        if (spellingCache.containsKey(input)) {
-            return spellingCache.get(input); // Return cached result if available
-        }
-
+        JLanguageTool langTool = new JLanguageTool(new AmericanEnglish());
         List<RuleMatch> matches = langTool.check(input);
 
         StringBuilder correctedText = new StringBuilder(input);
@@ -94,24 +95,10 @@ public enum StepKeyword {
             }
         }
 
-        String corrected = correctedText.toString();
-        spellingCache.put(input, corrected); // Cache the corrected version
-        return corrected;
+        return correctedText.toString();
     }
 
     private static String normalizeSpellingMistakes(String input) {
         return input.replaceAll("(.)\\1*", "$1");  // This will remove all instances of repeated characters
-    }
-
-    private static String applyStemming(String input) {
-        String[] words = input.split(" ");
-        words = Arrays.stream(words)
-                .map(word -> {
-                    stemmer.setCurrent(word);
-                    stemmer.stem();
-                    return stemmer.getCurrent();
-                })
-                .toArray(String[]::new);
-        return String.join(" ", words);
     }
 }
