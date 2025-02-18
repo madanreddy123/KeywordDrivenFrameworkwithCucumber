@@ -57,7 +57,6 @@ public class GeneralInformation {
                             WebElement inputField = driver.findElement(By.xpath(xpath));
                             inputField.clear();
                             inputField.sendKeys(inputData);
-                            Thread.sleep(1000);
                             break;
 
                         case VERIFY_TEXT:
@@ -113,9 +112,6 @@ public class GeneralInformation {
             }
         } catch (IOException | InvalidFormatException e) {
             e.printStackTrace();
-        } catch (InterruptedException e) {
-            Thread.currentThread().interrupt();
-            System.err.println("Thread Interrupted!");
         }
     }
 }
