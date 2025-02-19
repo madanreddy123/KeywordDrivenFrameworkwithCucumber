@@ -98,7 +98,7 @@ public class GeneralInformation {
 
                         default:
                             if (bddStep.isEmpty()) {
-                                continue;
+                                break;
                             } else {
                                 System.out.println("⚠️ Unrecognized step: " + bddStep);
                             }
