@@ -6,6 +6,7 @@ import org.languagetool.rules.RuleMatch;
 import org.tartarus.snowball.ext.EnglishStemmer;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -13,9 +14,10 @@ public enum StepKeyword {
     NAVIGATE("navigate"),
     CLICK("click"),
     ENTER_TEXT("enter"),
-    VERIFY_TEXT("should see"),
+    VERIFY_TEXT("validate"),
     CHECKBOX("check"),
     SELECT_DROPDOWN("select"),
+    DROPDOWN("pick the"),
     UPLOAD_FILE("upload"),
     CUSTOM_ACTION("generate"),
 
