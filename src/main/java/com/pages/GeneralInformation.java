@@ -198,7 +198,7 @@ public class GeneralInformation {
 
                             break;
 
-                        case DROPDOWN:
+                        case CHOOSE_DROPDOWN:
                             System.out.println("📌 Selecting from dropdown: " + inputData);
                             // If XPath is empty and tags are present, use dynamic XPath
                             inputxpath = xpath;
@@ -298,7 +298,7 @@ public class GeneralInformation {
             tags.add(Tag.SELECT);
         }
 
-        else if(bddstep.contains("dropdown")){
+        else if(bddstep.contains("pick")){
 
             tags.add(Tag.A);
         }

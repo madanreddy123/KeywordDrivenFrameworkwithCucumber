@@ -17,7 +17,7 @@ public enum StepKeyword {
     VERIFY_TEXT("validate"),
     CHECKBOX("check"),
     SELECT_DROPDOWN("select"),
-    DROPDOWN("pick the"),
+    CHOOSE_DROPDOWN("Pick"),
     UPLOAD_FILE("upload"),
     CUSTOM_ACTION("generate"),
 
