@@ -1,12 +1,8 @@
-package com;
+package com.Tagspecifications;
 
 import com.Enums.Tag;
-import org.openqa.selenium.By;
-import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
-import org.openqa.selenium.support.locators.RelativeLocator;
-import java.util.ArrayList;
+
 import java.util.List;
 
 public class DynamicLocators {

@@ -1,6 +1,6 @@
 package com.stepdefination;
 
-import com.DynamicLocators;
+import com.Tagspecifications.DynamicLocators;
 import com.Enums.Tag;
 import com.Tagspecifications.TagBasedSteps;
 import com.base.ActionClass;
