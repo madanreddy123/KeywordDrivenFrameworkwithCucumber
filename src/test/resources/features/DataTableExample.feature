@@ -1,6 +1,7 @@
 Feature: Data Table example
 
 
+  @Datatable
   Scenario: Data Table example
 
     Given I open the application "https://testzenlabs.ie/general-information-form/"

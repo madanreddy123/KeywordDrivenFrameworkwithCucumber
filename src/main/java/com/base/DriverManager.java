@@ -1,6 +1,5 @@
 package com.base;
 
-import org.openqa.selenium.Capabilities;
 import org.openqa.selenium.Platform;
 import org.openqa.selenium.UnexpectedAlertBehaviour;
 import org.openqa.selenium.WebDriver;
@@ -48,7 +47,7 @@ public class DriverManager {
                 driver.manage().timeouts().pageLoadTimeout(Duration.ofSeconds(60));
                 break;
             case "chrome":
-                System.setProperty("webdriver.chrome.driver", "src/main/resources/drivers/chromedriver.exe");
+               // System.setProperty("webdriver.chrome.driver", "src/main/resources/drivers/chromedriver.exe");
                 //WebDriverManager.chromedriver().setup(); // Line 2
                 String downloadFilepath = System.getProperty("user.dir")+File.separator+"downloads";
                 HashMap<String, Object> chromePrefs = new HashMap<String, Object>();
@@ -70,12 +69,19 @@ public class DriverManager {
             case "firefox":
 
                 System.setProperty("webdriver.gecko.driver", "src/main/resources/drivers/geckodriver.exe");
-                FirefoxOptions firefoxOptions = new FirefoxOptions();
-                firefoxOptions.addArguments("--disable-extensions");
-                firefoxOptions.addArguments("disable-infobars");
-                firefoxOptions.addArguments("start-maximized");
-                firefoxOptions.addArguments("--disable-gpu");
-                driver = new FirefoxDriver(firefoxOptions);
+               // WebDriverManager.firefoxdriver().setup();
+                // Configure Firefox options
+                FirefoxOptions firefoxoptions = new FirefoxOptions();
+                firefoxoptions.addArguments("--disable-extensions");
+                firefoxoptions.addArguments("disable-infobars");
+                firefoxoptions.addArguments("start-maximized");
+                firefoxoptions.addArguments("--disable-gpu");
+
+                // Enable insecure certificates (if needed)
+                firefoxoptions.setAcceptInsecureCerts(true);
+
+                // Launch Firefox with the specified options
+               driver = new FirefoxDriver(firefoxoptions);
                 driver.manage().deleteAllCookies();
                 driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(60));
                 driver.manage().timeouts().pageLoadTimeout(Duration.ofSeconds(60));
@@ -93,7 +99,6 @@ public class DriverManager {
                 options.setCapability(CapabilityType.UNHANDLED_PROMPT_BEHAVIOUR, UnexpectedAlertBehaviour.DISMISS);
                 cap = new DesiredCapabilities();
                 cap.setBrowserName("firefox");
-                cap.setVersion("96.0.4664.45");
                 cap.setPlatform(Platform.ANY);
                 cap.setCapability("platform", Platform.WIN10);
                 cap.setCapability(ChromeOptions.CAPABILITY,options);

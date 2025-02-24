@@ -20,7 +20,7 @@ import java.util.Properties;
 
 @CucumberOptions(
         features = {"src/test/resources/features"},
-        glue = {"com.stepdefination"}, tags = "@keyword",
+        glue = {"com.stepdefination"}, tags = "@Datatable",
         plugin = { "pretty", "io.qameta.allure.cucumber6jvm.AllureCucumber6Jvm","json:target/cucumberDefault.json" })
 public class SmokeTest extends AbstractTestNGCucumberTests {
     @Override
