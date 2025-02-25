@@ -124,13 +124,6 @@
       <version>9.12.0</version>
     </dependency>
 
-    <!-- LanguageTool Core -->
-    <dependency>
-      <groupId>org.languagetool</groupId>
-      <artifactId>languagetool-core</artifactId>
-      <version>6.5</version> <!-- Updated to the latest version -->
-    </dependency>
-
     <!-- English Language Module -->
     <dependency>
       <groupId>org.languagetool</groupId>
