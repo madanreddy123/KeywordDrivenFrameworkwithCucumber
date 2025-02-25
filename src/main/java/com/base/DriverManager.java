@@ -74,7 +74,7 @@ public class DriverManager {
                 FirefoxOptions firefoxoptions = new FirefoxOptions();
                 firefoxoptions.addArguments("--disable-extensions");
                 firefoxoptions.addArguments("disable-infobars");
-                firefoxoptions.addArguments("start-maximized");
+               // firefoxoptions.addArguments("start-maximized");
                 firefoxoptions.addArguments("--disable-gpu");
 
                 // Enable insecure certificates (if needed)
