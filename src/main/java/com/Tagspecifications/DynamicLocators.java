@@ -43,7 +43,7 @@ public class DynamicLocators {
             System.err.println("🚨 Generated XPath is empty.");
         }
 
-        System.out.println("Generated XPath: " + finalXPath);
+       // System.out.println("Generated XPath: " + finalXPath);
         return finalXPath;
     }
 
@@ -78,7 +78,7 @@ public class DynamicLocators {
             System.err.println("🚨 Generated XPath is empty.");
         }
 
-        System.out.println("Generated XPath: " + finalXPath);
+        //System.out.println("Generated XPath: " + finalXPath);
         return finalXPath;
     }
 
@@ -108,7 +108,7 @@ public class DynamicLocators {
                         searchText.toLowerCase()
                 );
                 xpathBuilder.append("//").append(tagValue).append("[").append(attributeCondition).append("]").append("[last()]").append(" | ");
-                System.out.println("Using attribute: " + attribute + " with condition: " + attributeCondition);  // Log the attribute and condition
+               // System.out.println("Using attribute: " + attribute + " with condition: " + attributeCondition);  // Log the attribute and condition
             }
         }
 
@@ -124,7 +124,7 @@ public class DynamicLocators {
             System.err.println("🚨 Generated XPath is empty.");
         }
 
-        System.out.println("Generated XPath: " + finalXPath);
+        //System.out.println("Generated XPath: " + finalXPath);
         return finalXPath;
     }
 
@@ -154,7 +154,7 @@ public class DynamicLocators {
                         searchText.toLowerCase()
                 );
                 xpathBuilder.append("//").append(tagValue).append("[").append(attributeCondition).append("]").append("[last()]").append(" | ");
-                System.out.println("Using attribute: " + attribute + " with condition: " + attributeCondition);  // Log the attribute and condition
+               // System.out.println("Using attribute: " + attribute + " with condition: " + attributeCondition);  // Log the attribute and condition
             }
         }
 
@@ -170,7 +170,7 @@ public class DynamicLocators {
             System.err.println("🚨 Generated XPath is empty.");
         }
 
-        System.out.println("Generated XPath: " + finalXPath);
+        //System.out.println("Generated XPath: " + finalXPath);
         return finalXPath;
     }
 
@@ -199,7 +199,7 @@ public class DynamicLocators {
                         searchText.toLowerCase()
                 );
                 xpathBuilder.append("//").append(tagValue).append("[").append(attributeCondition).append("]").append("[last()]").append(" | ");
-                System.out.println("Using attribute: " + attribute + " with condition: " + attributeCondition);  // Log the attribute and condition
+               // System.out.println("Using attribute: " + attribute + " with condition: " + attributeCondition);  // Log the attribute and condition
             }
         }
 
@@ -211,7 +211,7 @@ public class DynamicLocators {
             System.err.println("🚨 Generated XPath is empty.");
         }
 
-        System.out.println("Generated XPath: " + finalXPath);
+       // System.out.println("Generated XPath: " + finalXPath);
         return finalXPath;
     }
 

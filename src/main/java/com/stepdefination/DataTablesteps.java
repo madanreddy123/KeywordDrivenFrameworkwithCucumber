@@ -74,9 +74,9 @@ public class DataTablesteps {
             String inputxpath = xpath;
             if (xpath.isEmpty() && !tags.isEmpty()) {
                 inputxpath = dynamicLocators.generateDynamicXPathforinput(field, tags);
-                System.out.println("Generated dynamic XPath for input: " + inputxpath);
+               // System.out.println("Generated dynamic XPath for input: " + inputxpath);
             }
-            System.out.println("xpath" + inputxpath);
+           // System.out.println("xpath" + inputxpath);
 
             WebElement element1 = generalInformation.findElement(inputxpath, xpath);
             element1.clear();
@@ -124,9 +124,9 @@ public class DataTablesteps {
             String inputxpath = xpath;
             if (xpath.isEmpty() && !tags.isEmpty()) {
                 inputxpath = dynamicLocators.generateDynamicXPathforclick(field, tags);
-                System.out.println("Generated dynamic XPath for input: " + inputxpath);
+                //System.out.println("Generated dynamic XPath for input: " + inputxpath);
             }
-            System.out.println("xpath" + inputxpath);
+            //System.out.println("xpath" + inputxpath);
 
             WebElement element = generalInformation.findElement(inputxpath, xpath);
             if (element != null) {
@@ -178,9 +178,9 @@ public class DataTablesteps {
             String inputxpath = xpath;
             if (xpath.isEmpty() && !tags.isEmpty()) {
                 inputxpath = dynamicLocators.generateDynamiccheckXPath(field, tags);
-                System.out.println("Generated dynamic XPath for input: " + inputxpath);
+               // System.out.println("Generated dynamic XPath for input: " + inputxpath);
             }
-            System.out.println("xpath" + inputxpath);
+            //System.out.println("xpath" + inputxpath);
 
             WebElement element = generalInformation.findElement(inputxpath, xpath);
             if (element != null) {
@@ -229,9 +229,9 @@ public class DataTablesteps {
             String inputxpath = xpath;
             if (xpath.isEmpty() && !tags.isEmpty()) {
                 inputxpath = dynamicLocators.generateDynamicradiobuttonXPath(field, tags);
-                System.out.println("Generated dynamic XPath for input: " + inputxpath);
+               // System.out.println("Generated dynamic XPath for input: " + inputxpath);
             }
-            System.out.println("xpath" + inputxpath);
+           // System.out.println("xpath" + inputxpath);
 
             WebElement element = generalInformation.findElement(inputxpath, xpath);
             if (element != null) {
@@ -277,9 +277,9 @@ public class DataTablesteps {
             String inputxpath = xpath;
             if (xpath.isEmpty() && !tags.isEmpty()) {
                 inputxpath = dynamicLocators.generateDynamicXPathforclick(arg1, tags);
-                System.out.println("Generated dynamic XPath for input: " + inputxpath);
+               // System.out.println("Generated dynamic XPath for input: " + inputxpath);
             }
-            System.out.println("xpath" + inputxpath);
+           // System.out.println("xpath" + inputxpath);
 
             WebElement element = generalInformation.findElement(inputxpath, xpath);
             if (element != null) {
@@ -293,9 +293,9 @@ public class DataTablesteps {
 
         if (xpath.isEmpty() && !tags.isEmpty()) {
             inputxpath = dynamicLocators.generateDynamicXPathforclick(arg0, tags);
-            System.out.println("Generated dynamic XPath for input: " + inputxpath);
+           // System.out.println("Generated dynamic XPath for input: " + inputxpath);
         }
-        System.out.println("xpath" + inputxpath);
+        //System.out.println("xpath" + inputxpath);
 
         element = generalInformation.findElement(inputxpath, xpath);
         if (element != null) {
