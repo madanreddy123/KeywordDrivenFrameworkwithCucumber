@@ -73,7 +73,7 @@ public class DataTablesteps {
             // If XPath is empty and tags are present, use dynamic XPath
             String inputxpath = xpath;
             if (xpath.isEmpty() && !tags.isEmpty()) {
-                inputxpath = dynamicLocators.generateDynamicXPath(field, tags);
+                inputxpath = dynamicLocators.generateDynamicXPathforinput(field, tags);
                 System.out.println("Generated dynamic XPath for input: " + inputxpath);
             }
             System.out.println("xpath" + inputxpath);
@@ -123,7 +123,7 @@ public class DataTablesteps {
             // If XPath is empty and tags are present, use dynamic XPath
             String inputxpath = xpath;
             if (xpath.isEmpty() && !tags.isEmpty()) {
-                inputxpath = dynamicLocators.generateDynamicXPath(field, tags);
+                inputxpath = dynamicLocators.generateDynamicXPathforclick(field, tags);
                 System.out.println("Generated dynamic XPath for input: " + inputxpath);
             }
             System.out.println("xpath" + inputxpath);
@@ -276,7 +276,7 @@ public class DataTablesteps {
             // If XPath is empty and tags are present, use dynamic XPath
             String inputxpath = xpath;
             if (xpath.isEmpty() && !tags.isEmpty()) {
-                inputxpath = dynamicLocators.generateDynamicXPath(arg1, tags);
+                inputxpath = dynamicLocators.generateDynamicXPathforclick(arg1, tags);
                 System.out.println("Generated dynamic XPath for input: " + inputxpath);
             }
             System.out.println("xpath" + inputxpath);
@@ -292,7 +292,7 @@ public class DataTablesteps {
             }
 
         if (xpath.isEmpty() && !tags.isEmpty()) {
-            inputxpath = dynamicLocators.generateDynamicXPath(arg0, tags);
+            inputxpath = dynamicLocators.generateDynamicXPathforclick(arg0, tags);
             System.out.println("Generated dynamic XPath for input: " + inputxpath);
         }
         System.out.println("xpath" + inputxpath);
@@ -306,5 +306,11 @@ public class DataTablesteps {
             System.err.println("🚨 Could not find element for label: " + inputxpath);
         }
 
+    }
+
+    @Then("wait for the element")
+    public void waitForTheElement() {
+
+        actions.waitforSeconds(1);
     }
 }

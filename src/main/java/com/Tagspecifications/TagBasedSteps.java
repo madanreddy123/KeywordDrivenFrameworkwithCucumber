@@ -19,7 +19,6 @@ public class TagBasedSteps {
 
 
             if (bddstep.contains("click")) {
-                tags.add(Tag.INPUT);
                 tags.add(Tag.A);
                 tags.add(Tag.DIV);
                 tags.add(Tag.BUTTON);

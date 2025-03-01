@@ -35,7 +35,7 @@ public class DriverManager {
         String path=System.getProperty("user.dir");
         switch (browser.toLowerCase()) {
             case "edge":
-                System.setProperty("webdriver.edge.driver", "src/main/resources/drivers/msedgedriver.exe");
+                //System.setProperty("webdriver.edge.driver", "src/main/resources/drivers/msedgedriver.exe");
                 EdgeOptions edgeOptions = new EdgeOptions();
                 edgeOptions.addArguments("--disable-extensions");
                 edgeOptions.addArguments("disable-infobars");
@@ -68,7 +68,7 @@ public class DriverManager {
 
             case "firefox":
 
-                System.setProperty("webdriver.gecko.driver", "src/main/resources/drivers/geckodriver.exe");
+                //System.setProperty("webdriver.gecko.driver", "src/main/resources/drivers/geckodriver.exe");
                // WebDriverManager.firefoxdriver().setup();
                 // Configure Firefox options
                 FirefoxOptions firefoxoptions = new FirefoxOptions();
@@ -125,7 +125,7 @@ public class DriverManager {
                 cap.setBrowserName("chrome");
                 cap.setCapability(ChromeOptions.CAPABILITY,chromeOptions);
                 System.out.println("before remote");
-                driver=new RemoteWebDriver(new URL("http://localhost:4444/wd/hub"),cap);
+                driver=new RemoteWebDriver(new URL("http://192.168.1.15:4444/wd/hub"),cap);
                 System.out.println("after remote");
                 driver.manage().window().maximize();
                 driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(60));
