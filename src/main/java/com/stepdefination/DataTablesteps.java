@@ -9,6 +9,7 @@ import com.pages.GeneralInformation;
 import com.utility.ExcelBDDReader;
 import io.cucumber.datatable.DataTable;
 import io.cucumber.java.en.*;
+import org.openqa.selenium.By;
 import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
@@ -79,6 +80,8 @@ public class DataTablesteps {
            // System.out.println("xpath" + inputxpath);
 
             WebElement element1 = generalInformation.findElement(inputxpath, xpath);
+            JavascriptExecutor js = (JavascriptExecutor) driver;
+            js.executeScript("arguments[0].style.border='3px solid red';", element1);
             element1.clear();
             element1.sendKeys(value);
             if (element1.getAttribute("value").isEmpty())
@@ -131,6 +134,7 @@ public class DataTablesteps {
             WebElement element = generalInformation.findElement(inputxpath, xpath);
             if (element != null) {
                 JavascriptExecutor executor = (JavascriptExecutor) driver;
+                executor.executeScript("arguments[0].style.border='3px solid red';", element);
                 executor.executeScript("arguments[0].click();", element);
                 actions.waitforSeconds(1);
                 if (!element.isSelected()) {
@@ -182,9 +186,11 @@ public class DataTablesteps {
             }
             //System.out.println("xpath" + inputxpath);
 
+
             WebElement element = generalInformation.findElement(inputxpath, xpath);
             if (element != null) {
                 JavascriptExecutor executor = (JavascriptExecutor) driver;
+                executor.executeScript("arguments[0].style.border='3px solid red';", element);
                 executor.executeScript("arguments[0].click();", element);
                 if (!element.isSelected()) {
                     element.click();
@@ -236,6 +242,7 @@ public class DataTablesteps {
             WebElement element = generalInformation.findElement(inputxpath, xpath);
             if (element != null) {
                 JavascriptExecutor executor = (JavascriptExecutor) driver;
+                executor.executeScript("arguments[0].style.border='3px solid red';", element);
                 executor.executeScript("arguments[0].click();", element);
                 if (!element.isSelected()) {
                     element.click();
@@ -282,8 +289,9 @@ public class DataTablesteps {
            // System.out.println("xpath" + inputxpath);
 
             WebElement element = generalInformation.findElement(inputxpath, xpath);
-            if (element != null) {
+        if (element != null) {
                 JavascriptExecutor executor = (JavascriptExecutor) driver;
+            executor.executeScript("arguments[0].style.border='3px solid red';", element);
                 executor.executeScript("arguments[0].click();", element);
                 actions.waitforSeconds(1);
 
@@ -298,8 +306,10 @@ public class DataTablesteps {
         //System.out.println("xpath" + inputxpath);
 
         element = generalInformation.findElement(inputxpath, xpath);
+
         if (element != null) {
             JavascriptExecutor executor = (JavascriptExecutor) driver;
+            executor.executeScript("arguments[0].style.border='3px solid red';", element);
             executor.executeScript("arguments[0].click();", element);
             actions.waitforSeconds(1);
         } else {
