@@ -65,14 +65,11 @@ public class GeneralInformation {
     /**
      * Find an element by dynamic XPath, fallback to Excel XPath if not found.
      */
-    public WebElement findElement(String dynamicXPath, String excelXPath) {
-        try {
+    public WebElement findElement(By dynamicXPath) {
+
             // Try to find the element using the dynamic XPath
-            return driver.findElement(By.xpath(dynamicXPath));
-        } catch (NoSuchElementException e) {
-            // If not found, fall back to the Excel XPath
-            return driver.findElement(By.xpath(excelXPath));
-        }
+            return driver.findElement(dynamicXPath);
+
     }
 
     /**
@@ -115,7 +112,7 @@ public class GeneralInformation {
                                 System.out.println("Generated dynamic XPath: " + dynamicXPath);
                             }
 
-                            WebElement element = findElement(dynamicXPath, xpath);
+                            WebElement element = findElement(By.xpath(xpath));
                             JavascriptExecutor executor = (JavascriptExecutor)driver;
                             executor.executeScript("arguments[0].click();", element);
                             if (!element.isSelected())
@@ -135,7 +132,7 @@ public class GeneralInformation {
                                 System.out.println("Generated dynamic XPath for input: " + inputxpath);
                             }
 
-                            WebElement element1 = findElement(inputxpath, xpath);
+                            WebElement element1 = findElement(By.xpath(xpath));
                             element1.clear();
                             element1.sendKeys(inputData);
                             if (element1.getAttribute("value").isEmpty())
@@ -169,7 +166,7 @@ public class GeneralInformation {
                                 System.out.println("Generated dynamic XPath for input: " + inputxpath);
                             }
 
-                            WebElement checkbox = findElement(inputxpath, xpath);
+                            WebElement checkbox = findElement(By.xpath(xpath));
                             if (!checkbox.isSelected()) {
                                 checkbox.click();
                             }
