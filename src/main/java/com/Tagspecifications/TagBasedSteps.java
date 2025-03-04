@@ -22,6 +22,7 @@ public class TagBasedSteps {
                 tags.add(Tag.A);
                 tags.add(Tag.DIV);
                 tags.add(Tag.BUTTON);
+                tags.add(Tag.H5);
 
             }
 
@@ -46,6 +47,7 @@ public class TagBasedSteps {
 
                 tags.add(Tag.INPUT);
                 tags.add(Tag.TEXTAREA);
+                tags.add(Tag.SPAN);
             }
 
             else if(bddstep.contains("validate")){

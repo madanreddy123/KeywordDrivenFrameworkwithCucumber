@@ -145,12 +145,21 @@ public class DataTablesteps {
             String field = row.get("Fields").trim();
             System.out.println("Clicking on: " + field);
 
-            String xpath = row.get("Xpath").trim();  // Extract XPath
+            String xpath = row.get("Xpath");
+
+          String  xpathlo = "";
+          try {
+              xpathlo += xpath.trim();
+          }
+          catch (NullPointerException e){
+              System.out.println(e.getMessage());
+          }
+
 
             WebElement element = null;
 
             // First, try to use the provided XPath
-            if (!xpath.isEmpty()) {
+            if (!xpathlo.isEmpty()) {
                 try {
                     element = generalInformation.findElement(By.xpath(xpath));
                     if (element != null) {

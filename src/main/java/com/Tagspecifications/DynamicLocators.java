@@ -68,7 +68,7 @@ public class DynamicLocators {
                     "[last()]").append(" | ");
         }
 
-        xpathBuilder.append("//button[contains(text(), '" + searchText + "')]").append("[last()]").append(" | ");
+        //xpathBuilder.append("//*[(text(), '" + searchText + "')]").append("[last()]").append(" | ");
 
         // Fallback XPath based on class and id with position filtering
         xpathBuilder.append("//").append(tags.get(0).getTagValue()).append("[contains(@class, '" + searchText + "') or contains(@id, '" + searchText + "')]").append("[last()]");

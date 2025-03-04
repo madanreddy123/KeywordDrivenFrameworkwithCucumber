@@ -7,7 +7,7 @@ public enum Tag {
     DIV("div"),
     SPAN("span"),
     BUTTON("button"),
-    SELECT("select");
+    SELECT("select"), H5("h5");
 
     private String tagValue;
 

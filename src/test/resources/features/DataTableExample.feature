@@ -19,14 +19,14 @@ Feature: Data Table example
 
     And select the check box as following:
       | Fields | Xpath |
-      | Male   | Xpath |
+      | Male   |  |
 
     And select the radio button as following:
       | Fields          | Xpath |
-      | Major(Above 18) | Xpath |
+      | Major(Above 18) |  |
 
     Then choose the option "Europe" from the dropdown "Asia"
 
     Then click on the following:
       | Fields           | Xpath |
-      | Never Registered | Xpath |
+      | Never Registered |  |
