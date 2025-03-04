@@ -6,58 +6,56 @@ import org.languagetool.rules.RuleMatch;
 import org.tartarus.snowball.ext.EnglishStemmer;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 public enum StepKeyword {
-    NAVIGATE("navigate"),
-    CLICK("click"),
-    ENTER_TEXT("enter"),
-    VERIFY_TEXT("validate"),
-    CHECKBOX("check"),
-    SELECT_DROPDOWN("select"),
-    CHOOSE_DROPDOWN("Pick"),
-    UPLOAD_FILE("upload"),
-    CUSTOM_ACTION("generate"),
+    NAVIGATE("navigate", "go", "move"),
+    CLICK("click", "press", "tap"),
+    ENTER_TEXT("enter", "input", "type"),
+    VERIFY_TEXT("validate", "confirm", "assert"),
+    CHECKBOX("select checkbox", "tick checkbox", "mark box"),
+    SELECT_DROPDOWN("select option", "choose option", "pick from list"),
+    CHOOSE_DROPDOWN("pick dropdown", "choose dropdown"),
+    UPLOAD_FILE("upload", "attach", "submit file"),
+    CUSTOM_ACTION("generate", "create", "produce"),
 
     UNKNOWN(""); // Default case
 
-    private final String keywordPattern;
+    private final List<String> keywordPatterns;
 
-    StepKeyword(String keywordPattern) {
-        this.keywordPattern = keywordPattern;
+    StepKeyword(String... keywordPatterns) {
+        this.keywordPatterns = Arrays.asList(keywordPatterns);
     }
 
-    public String getPattern() {
-        return keywordPattern;
+    public List<String> getPatterns() {
+        return keywordPatterns;
     }
 
     public static StepKeyword fromBDDStep(String bddStep) {
-        bddStep = bddStep.trim().toLowerCase(); // Normalize case and trim spaces
-
-        // Remove extra spaces and normalize repeated characters
+        bddStep = bddStep.trim().toLowerCase();
         bddStep = bddStep.replaceAll("\\s+", " ");
         bddStep = normalizeSpellingMistakes(bddStep);
 
-        // First, check if the BDD step directly contains any keyword (exact match)
+        // Check if any keyword pattern is directly present in the BDD step
         for (StepKeyword keyword : values()) {
-            if (!keyword.getPattern().isEmpty() && bddStep.contains(keyword.getPattern().toLowerCase())) {
-                return keyword;  // Direct match found
+            for (String pattern : keyword.getPatterns()) {
+                if (!pattern.isEmpty() && bddStep.contains(pattern.toLowerCase())) {
+                    return keyword;
+                }
             }
         }
 
-        // If no exact match found, apply spelling correction using LanguageTool
+        // Apply spell correction using LanguageTool
         try {
             bddStep = correctSpelling(bddStep);
         } catch (IOException e) {
             System.err.println("Error in spell checking: " + e.getMessage());
         }
 
-        // Normalize repeated characters again after spell correction
         bddStep = normalizeSpellingMistakes(bddStep);
 
-        // Apply stemming to the BDD step to catch variations of words
+        // Apply stemming to BDD step
         EnglishStemmer stemmer = new EnglishStemmer();
         String[] words = bddStep.split(" ");
         words = Arrays.stream(words)
@@ -69,23 +67,24 @@ public enum StepKeyword {
                 .toArray(String[]::new);
         bddStep = String.join(" ", words);
 
-        // Finally, check if the stemmed BDD step contains any of the keywords
+        // Check again after stemming
         for (StepKeyword keyword : values()) {
-            if (!keyword.getPattern().isEmpty()) {
-                stemmer.setCurrent(keyword.getPattern().toLowerCase());
-                stemmer.stem();
-                String stemmedKeyword = stemmer.getCurrent();
+            for (String pattern : keyword.getPatterns()) {
+                if (!pattern.isEmpty()) {
+                    stemmer.setCurrent(pattern.toLowerCase());
+                    stemmer.stem();
+                    String stemmedKeyword = stemmer.getCurrent();
 
-                if (bddStep.contains(stemmedKeyword)) {
-                    return keyword;  // Stemmed match found
+                    if (bddStep.contains(stemmedKeyword)) {
+                        return keyword;
+                    }
                 }
             }
         }
 
-        return UNKNOWN;  // Default case if no match found
+        return UNKNOWN;
     }
 
-    // Method to correct spelling errors using LanguageTool
     private static String correctSpelling(String input) throws IOException {
         JLanguageTool langTool = new JLanguageTool(new AmericanEnglish());
         List<RuleMatch> matches = langTool.check(input);
@@ -96,7 +95,7 @@ public enum StepKeyword {
         for (RuleMatch match : matches) {
             List<String> suggestions = match.getSuggestedReplacements();
             if (!suggestions.isEmpty()) {
-                String suggestion = suggestions.get(0); // Take the first suggestion
+                String suggestion = suggestions.get(0);
                 int start = match.getFromPos() + offset;
                 int end = match.getToPos() + offset;
                 correctedText.replace(start, end, suggestion);
@@ -108,6 +107,6 @@ public enum StepKeyword {
     }
 
     private static String normalizeSpellingMistakes(String input) {
-        return input.replaceAll("(.)\\1*", "$1");  // Normalize repeated characters
+        return input.replaceAll("(.)\\1+", "$1");  // Normalize repeated characters
     }
 }
