@@ -1,6 +1,7 @@
 Feature: Automate Testzen Labs Form
 
 
+  @ttt
   Scenario: Fill out the General Information Form
 
 

@@ -9,6 +9,7 @@ import org.apache.poi.openxml4j.exceptions.InvalidFormatException;
 import org.openqa.selenium.*;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.support.ui.Select;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
@@ -24,6 +25,12 @@ public class GeneralInformation {
         excelReader = new ExcelReader();
     }
 
+   static String scenario;
+   static String stepNo;
+    static String bddStep;
+    static String xpath;
+   static String additionalXpath;
+  static   String inputData;
 
     /**
      * Generate a dynamic XPath based on BDD step text.
@@ -62,187 +69,87 @@ public class GeneralInformation {
         return finalXPath;
     }
 
-    /**
-     * Find an element by dynamic XPath, fallback to Excel XPath if not found.
-     */
-    public WebElement findElement(By dynamicXPath) {
-
-            // Try to find the element using the dynamic XPath
-            return driver.findElement(dynamicXPath);
-
+    public WebElement findElement(By... dynamicXpaths) {
+        for (By xpath : dynamicXpaths) {
+            try {
+                return driver.findElement(xpath);
+            } catch (NoSuchElementException e) {
+                System.err.println("🚨 Element Not Found for XPath: " + xpath);
+            }
+        }
+        throw new NoSuchElementException("None of the provided XPaths found an element.");
     }
 
-    /**
-     * Executes test steps from an Excel sheet.
-     * It navigates to the URL first, then performs actions like click, enter text, verify text, etc.
-     */
+    public void printWebElements(WebElement... elements) {
+        for (WebElement element : elements) {
+            System.out.println(element.getText());
+        }
+    }
+
     public void executeTest(String excelFilePath, String sheetName) {
         try {
             List<Map<String, String>> testSteps = excelReader.getData(excelFilePath, sheetName);
 
             for (Map<String, String> step : testSteps) {
-                String scenario = String.valueOf(step.get("Scenario")).trim();
-                String stepNo = String.valueOf(step.get("Step No")).trim();
-                String bddStep = String.valueOf(step.get("BDD Steps")).trim();
-                String xpath = String.valueOf(step.get("XPath")).trim();
-                String additionalXpath = String.valueOf(step.get("Additional XPath")).trim();
-                String inputData = String.valueOf(step.get("Input Data")).trim();
+                scenario = step.get("Scenario").trim();
+                stepNo = step.get("Step No").trim();
+                bddStep = step.get("BDD Steps").trim();
+                xpath = step.get("XPath").trim();
+                additionalXpath = step.get("Additional XPath").trim();
+                inputData = step.get("Input Data").trim();
 
-                // Instead of extracting tags from the Excel file,
-                // use predefined tags based on the step keyword
                 List<Tag> tags = getTagsBasedOnStep(bddStep);
-
                 System.out.println("🔹 Executing Step: " + bddStep);
-
                 StepKeyword keyword = StepKeyword.fromBDDStep(bddStep);
+
                 try {
                     switch (keyword) {
                         case NAVIGATE:
-                            System.out.println("🌐 Navigating to: " + inputData);
+                            System.out.println("🌍 Navigating to: " + inputData);
                             driver.get(inputData);
                             break;
 
                         case CLICK:
-                            System.out.println("🖱 Clicking element: " + xpath);
-
-                            // If XPath is empty and tags are present, use dynamic XPath
-                            String dynamicXPath = xpath;
-                            if (xpath.isEmpty() && !tags.isEmpty()) {
-                                dynamicXPath = generateDynamicClickXPath(bddStep, tags);
-                                System.out.println("Generated dynamic XPath: " + dynamicXPath);
-                            }
-
-                            WebElement element = findElement(By.xpath(xpath));
-                            JavascriptExecutor executor = (JavascriptExecutor)driver;
-                            executor.executeScript("arguments[0].click();", element);
-                            if (!element.isSelected())
-                            {
-                                element.click();
-                            }
-                            System.out.println("🖱 Clicked element: " + xpath);
-                        break;
+                            System.out.println("🖱️ Clicking element: " + xpath);
+                            String dynamicXPath = xpath.isEmpty() && !tags.isEmpty() ? generateDynamicClickXPath(bddStep, tags) : xpath;
+                            WebElement element = findElement(By.xpath(dynamicXPath));
+                            clickElement(element);
+                            break;
 
                         case ENTER_TEXT:
-                            System.out.println("⌨ Entering text: " + inputData);
-
-                            // If XPath is empty and tags are present, use dynamic XPath
-                            String inputxpath = xpath;
-                            if (xpath.isEmpty() && !tags.isEmpty()) {
-                                inputxpath = generateDynamicClickXPath(bddStep, tags);
-                                System.out.println("Generated dynamic XPath for input: " + inputxpath);
-                            }
-
-                            WebElement element1 = findElement(By.xpath(xpath));
-                            element1.clear();
-                            element1.sendKeys(inputData);
-                            if (element1.getAttribute("value").isEmpty())
-                            {
-                                element1.sendKeys(inputData);
-                            }
+                            System.out.println("⌨️ Entering text: " + inputData);
+                            String inputXpath = xpath.isEmpty() && !tags.isEmpty() ? generateDynamicClickXPath(bddStep, tags) : xpath;
+                            WebElement inputElement = findElement(By.xpath(inputXpath));
+                            enterText(inputElement, inputData);
                             break;
 
                         case VERIFY_TEXT:
-                            // If XPath is empty and tags are present, use dynamic XPath
-                           inputxpath = xpath;
-                            if (xpath.isEmpty() && !tags.isEmpty()) {
-                                inputxpath = generateDynamicClickXPath(bddStep, tags);
-                                System.out.println("Generated dynamic XPath for input: " + inputxpath);
-                            }
-
-                            actionClass.waitForVisibilityOfElement(By.xpath(inputxpath), 3);
-                            String actualText = driver.findElement(By.xpath(inputxpath)).getText();
-                            if (!actualText.equals(inputData)) {
-                                System.out.println("❌ Verification Failed: Expected - " + inputData + ", Found - " + actualText);
-                            } else {
-                                System.out.println("✅ Verification Passed");
-                            }
+                            inputXpath = xpath.isEmpty() && !tags.isEmpty() ? generateDynamicClickXPath(bddStep, tags) : xpath;
+                            verifyText(inputXpath, inputData);
                             break;
 
                         case CHECKBOX:
-                            // If XPath is empty and tags are present, use dynamic XPath
-                           inputxpath = xpath;
-                            if (xpath.isEmpty() && !tags.isEmpty()) {
-                                inputxpath = generateDynamicClickXPath(bddStep, tags);
-                                System.out.println("Generated dynamic XPath for input: " + inputxpath);
-                            }
-
-                            WebElement checkbox = findElement(By.xpath(xpath));
-                            if (!checkbox.isSelected()) {
-                                checkbox.click();
-                            }
-                            System.out.println("☑ Checked: " + xpath);
+                            System.out.println("☑️ Checking checkbox: " + xpath);
+                            WebElement checkbox = findElement(By.xpath(xpath.isEmpty() ? generateDynamicClickXPath(bddStep, tags) : xpath));
+                            checkCheckbox(checkbox);
                             break;
 
                         case SELECT_DROPDOWN:
-                            System.out.println("📌 Selecting from dropdown: " + inputData);
-                            // If XPath is empty and tags are present, use dynamic XPath
-                            inputxpath = xpath;
-                            if (xpath.isEmpty() && !tags.isEmpty()) {
-                                inputxpath = generateDynamicClickXPath(bddStep, tags);
-                                System.out.println("Generated dynamic XPath for input: " + inputxpath);
-                            }
-
-                            if (inputxpath.contains("//select")) {
-                                actionClass.waitForVisibilityOfElement(By.xpath(inputxpath), 13);
-                                Select select = new Select(driver.findElement(By.xpath(inputxpath)));
-                                    String result = "";
-                                       result+=extractOption(bddStep);
-                                    System.out.println(result);
-                                    select.selectByVisibleText(result);
-                                System.out.println("Selected option : " + result);
-
-                            }
-
-                            break;
-
-                        case CHOOSE_DROPDOWN:
-                            System.out.println("📌 Selecting from dropdown: " + inputData);
-                            // If XPath is empty and tags are present, use dynamic XPath
-                            inputxpath = xpath;
-                            if (xpath.isEmpty() && !tags.isEmpty()) {
-                                inputxpath = generateDynamicClickXPath(bddStep, tags);
-                                System.out.println("Generated dynamic XPath for input: " + inputxpath);
-                            }
-
-                            System.out.println(inputxpath);
-
-                                actionClass.waitForVisibilityOfElement(By.xpath(inputxpath), 3);
-                               actionClass.clickUsingJS(By.xpath(inputxpath));
-
-                               actionClass.waitforSeconds(1);
-                                String result = "";
-                                result+=extractOption(bddStep);
-                                String resultloc = result.trim();
-
-                                String additionalloc = additionalXpath;
-                                if (additionalloc.isEmpty())
-                                {
-                                    additionalloc  = "//*[contains(text(), '"+resultloc+"')]";
-
-                                }
-                                System.out.println(additionalloc);
-                                actionClass.waitForVisibilityOfElement(By.xpath(additionalloc), 3);
-                                actionClass.clickUsingJS(By.xpath(additionalloc));
-                                actionClass.waitforSeconds(1);
-
-
+                            System.out.println("🔽 Selecting dropdown: " + inputData);
+                            String selectXpath = xpath.isEmpty() && !tags.isEmpty() ? generateDynamicClickXPath(bddStep, tags) : xpath;
+                            selectDropdown(selectXpath, additionalXpath, bddStep);
                             break;
 
                         case UPLOAD_FILE:
-                            WebElement uploadField = driver.findElement(By.xpath(xpath));
-                            String filePath = new File("./" + PropertyReader.getFieldValue("sampledoc")).getAbsolutePath();
-                            uploadField.sendKeys(filePath);
-                            System.out.println("📂 Uploaded file: " + filePath);
+                            System.out.println("📂 Uploading file: " + xpath);
+                            uploadFile(xpath);
                             break;
 
                         case CUSTOM_ACTION:
-                            Random random = new Random();
-                            int number = random.nextInt(10000); // Generates 4-digit number
-                            System.out.println("🔢 Generated Random Number: " + number);
-                            actionClass.sendKeys(By.xpath(xpath), "12" + number);
+                            System.out.println("🔢 Performing custom action with random number.");
+                            performCustomAction(xpath);
                             break;
 
-                        // Handle actions for tags dynamically (Example: Input, A, etc.)
                         default:
                             if (bddStep.isEmpty()) {
                                 break;
@@ -251,16 +158,95 @@ public class GeneralInformation {
                             }
                             break;
                     }
-                } catch (NoSuchElementException e) {
-                    System.err.println("🚨 Element Not Found: " + xpath);
-                } catch (TimeoutException e) {
-                    System.err.println("⏳ Timeout on Step: " + bddStep);
+                } catch (NoSuchElementException | TimeoutException e) {
+                    System.err.println("⏳ Error in Step: " + bddStep + " - " + e.getMessage());
                 }
             }
         } catch (IOException | InvalidFormatException e) {
             e.printStackTrace();
         }
     }
+
+    // Action Methods with Symbols
+    public void clickElement(WebElement... elements) {
+        for (WebElement element : elements) {
+            try {
+                JavascriptExecutor executor = (JavascriptExecutor) driver;
+                executor.executeScript("arguments[0].click();", element);
+                if (!element.isSelected()) {
+                    element.click();
+                }
+                System.out.println("🖱️ Clicked element: " + element.getText());
+            } catch (Exception e) {
+                System.err.println("❌ Click action failed: " + e.getMessage());
+            }
+        }
+    }
+
+    public void enterText(WebElement element, String... textInputs) {
+        for (String text : textInputs) {
+            element.clear();
+            element.sendKeys(text);
+            if (element.getAttribute("value").isEmpty()) {
+                element.sendKeys(text);
+            }
+            System.out.println("⌨️ Entered text: " + text);
+        }
+    }
+
+    public void verifyText(String xpath, String... expectedTexts) {
+        actionClass.waitForVisibilityOfElement(By.xpath(xpath), 3);
+        String actualText = driver.findElement(By.xpath(xpath)).getText();
+        for (String expectedText : expectedTexts) {
+            if (!actualText.equals(expectedText)) {
+                System.out.println("❌ Verification Failed: Expected - " + expectedText + ", Found - " + actualText);
+            } else {
+                System.out.println("✅ Verification Passed");
+            }
+        }
+    }
+
+    public void checkCheckbox(WebElement... checkboxes) {
+        for (WebElement checkbox : checkboxes) {
+            if (!checkbox.isSelected()) {
+                checkbox.click();
+            }
+            System.out.println("☑️ Checked checkbox: " + checkbox.getText());
+        }
+    }
+
+    public void selectDropdown(String selectXpath, String additionalXpath, String bddStep) {
+        if (selectXpath.contains("//select")) {
+            actionClass.waitForVisibilityOfElement(By.xpath(selectXpath), 3);
+            Select select = new Select(driver.findElement(By.xpath(selectXpath)));
+            select.selectByVisibleText(inputData);
+            System.out.println("🔽 Selected dropdown option: " + inputData);
+        } else {
+            actionClass.waitForVisibilityOfElement(By.xpath(selectXpath), 3);
+            actionClass.clickUsingJS(By.xpath(selectXpath));
+            actionClass.waitforSeconds(1);
+            String option = extractOption(bddStep);
+            String optionXpath = additionalXpath.isEmpty() ? "//*[contains(text(), '" + option.trim() + "')]" : additionalXpath;
+            actionClass.waitForVisibilityOfElement(By.xpath(optionXpath), 3);
+            actionClass.clickUsingJS(By.xpath(optionXpath));
+            actionClass.waitforSeconds(1);
+            System.out.println("🔽 Selected option from dropdown: " + option);
+        }
+    }
+
+    public void uploadFile(String xpath) {
+        WebElement uploadField = driver.findElement(By.xpath(xpath));
+        String filePath = new File("./" + PropertyReader.getFieldValue("sampledoc")).getAbsolutePath();
+        uploadField.sendKeys(filePath);
+        System.out.println("📂 Uploaded file: " + filePath);
+    }
+
+    public void performCustomAction(String xpath) {
+        int number = new Random().nextInt(10000);
+        System.out.println("🔢 Generated Random Number: " + number);
+        actionClass.sendKeys(By.xpath(xpath), "12" + number);
+    }
+
 
     /**
      * Helper method to get tags based on the BDD Step.
