@@ -37,3 +37,4 @@ Feature: Data Table example
     Then click on the following:
       | Fields           | Xpath |
       | Never Registered |  |
+

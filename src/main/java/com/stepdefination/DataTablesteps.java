@@ -185,16 +185,23 @@ public class DataTablesteps {
             if (element != null) {
                 try {
                     JavascriptExecutor executor = (JavascriptExecutor) driver;
+
+                    // Highlight the element with a red border for debugging
                     executor.executeScript("arguments[0].style.border='3px solid red';", element);
+
+                    // Click using JavaScript
                     executor.executeScript("arguments[0].click();", element);
-                    if (!element.isSelected()) {
-                        element.click();
-                    }
+
+//                    // If the element is a checkbox or radio button, check if it needs to be selected
+//                    if (!element.isSelected()) {
+//                        // This check avoids clicking twice; just ensures the element is selected
+//                        executor.executeScript("arguments[0].click();", element);
+//                    }
                 }
-                catch (StaleElementReferenceException| ElementNotInteractableException e)
-                {
+                catch (StaleElementReferenceException | ElementNotInteractableException e) {
                     System.out.println(e.getMessage());
                 }
+
 
 
                 actions.waitforSeconds(1);

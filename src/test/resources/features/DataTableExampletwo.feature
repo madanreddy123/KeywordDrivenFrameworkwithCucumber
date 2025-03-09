@@ -10,7 +10,7 @@ Feature: Data Table example two
       | Fields | Xpath |
       | Home   |       |
 
-
+Then wait for the element
 #
 #
 #    Then choose the option "Hand Tools" from the dropdown "Categories"
