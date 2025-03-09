@@ -13,208 +13,66 @@ public class DynamicLocators {
     public DynamicLocators(WebDriver driver) {
         this.driver = driver;
     }
+    public  String generateXPath(WebDriver driver, String fieldName) {
+        List<WebElement> elements = driver.findElements(By.xpath(
+                "//*[contains(text(), '" + fieldName + "') " +
+                        "or contains(@id, '" + fieldName + "') " +
+                        "or contains(@name, '" + fieldName + "') " +
+                        "or contains(@class, '" + fieldName + "') " +
+                        "or contains(@placeholder, '" + fieldName + "') " +
+                        "or contains(@aria-label, '" + fieldName + "')]"
+        ));
 
-    public String generateDynamicXPathforinput(String fieldText, List<Tag> tags) {
-        String searchText = fieldText.trim();
-        if (searchText.isEmpty()) {
-            System.err.println("🚨 The search text from the BDD step is empty: " + fieldText);
-            return "";
+        if (elements.isEmpty()) {
+            return "Field not found";
         }
 
-        StringBuilder xpathBuilder = new StringBuilder();
+        for (WebElement element : elements) {
+            String tag = element.getTagName();
+            String id = element.getAttribute("id");
+            String name = element.getAttribute("name");
+            String placeholder = element.getAttribute("placeholder");
+            String ariaLabel = element.getAttribute("aria-label");
+            String text = element.getText();
 
-        // Loop through the tags
-        for (Tag tag : tags) {
-            // Start building XPath with a position-based filter
-            xpathBuilder.append("//").append(tag.getTagValue()).append("[" +
-                    "contains(translate(@placeholder, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), '" + searchText.toLowerCase() + "') or " +
-                    "contains(translate(@title, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), '" + searchText.toLowerCase() + "') or " +
-                    "contains(translate(@aria-label, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), '" + searchText.toLowerCase() + "') or " +
-                    "contains(translate(@name, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), '" + searchText.toLowerCase() + "') or " +
-                    "contains(translate(text(), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), '" + searchText.toLowerCase() + "')]" +
-                    "[last()]").append(" | ");
-        }
-
-        // Fallback XPath based on class and id with position filtering
-        xpathBuilder.append("//").append(tags.get(0).getTagValue()).append("[contains(@class, '" + searchText + "') or contains(@id, '" + searchText + "')]").append("[last()]");
-
-        String finalXPath = xpathBuilder.toString().trim();
-        if (finalXPath.isEmpty()) {
-            System.err.println("🚨 Generated XPath is empty.");
-        }
-
-       // System.out.println("Generated XPath: " + finalXPath);
-        return finalXPath;
-    }
-
-    public String generateDynamicXPathforclick(String fieldText, List<Tag> tags) {
-        String searchText = fieldText.trim();
-        if (searchText.isEmpty()) {
-            System.err.println("🚨 The search text from the BDD step is empty: " + fieldText);
-            return "";
-        }
-
-        StringBuilder xpathBuilder = new StringBuilder();
-
-        // Loop through the tags
-        for (Tag tag : tags) {
-            // Start building XPath with a position-based filter
-            xpathBuilder.append("//").append(tag.getTagValue()).append("[" +
-                    "contains(translate(@placeholder, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), '" + searchText.toLowerCase() + "') or " +
-                    "contains(translate(@title, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), '" + searchText.toLowerCase() + "') or " +
-                    "contains(translate(@aria-label, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), '" + searchText.toLowerCase() + "') or " +
-                    "contains(translate(@name, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), '" + searchText.toLowerCase() + "') or " +
-                    "contains(translate(text(), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), '" + searchText.toLowerCase() + "')]" +
-                    "[last()]").append(" | ");
-        }
-
-        //xpathBuilder.append("//*[(text(), '" + searchText + "')]").append("[last()]").append(" | ");
-
-        // Fallback XPath based on class and id with position filtering
-        xpathBuilder.append("//").append(tags.get(0).getTagValue()).append("[contains(@class, '" + searchText + "') or contains(@id, '" + searchText + "')]").append("[last()]");
-
-        String finalXPath = xpathBuilder.toString().trim();
-        if (finalXPath.isEmpty()) {
-            System.err.println("🚨 Generated XPath is empty.");
-        }
-
-        //System.out.println("Generated XPath: " + finalXPath);
-        return finalXPath;
-    }
-
-
-
-    public String generateDynamiccheckXPath(String fieldText, List<Tag> tags) {
-        String searchText = fieldText.trim();
-        if (searchText.isEmpty()) {
-            System.err.println("🚨 The search text from the BDD step is empty: " + fieldText);
-            return "";
-        }
-
-        StringBuilder xpathBuilder = new StringBuilder();
-
-        // Loop through the tags (keeping this for general tag-based XPath generation)
-        for (Tag tag : tags) {
-            String tagValue = tag.getTagValue();
-            System.out.println("Processing tag: " + tagValue);  // Log the tag
-
-            // Construct the XPath for different attributes
-            String[] attributes = {"placeholder", "title", "aria-label", "name", "text()"};
-
-            for (String attribute : attributes) {
-                String attributeCondition = String.format(
-                        "contains(translate(@%s, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), '%s')",
-                        attribute,
-                        searchText.toLowerCase()
-                );
-                xpathBuilder.append("//").append(tagValue).append("[").append(attributeCondition).append("]").append("[last()]").append(" | ");
-               // System.out.println("Using attribute: " + attribute + " with condition: " + attributeCondition);  // Log the attribute and condition
+            // Unique Attribute-Based XPath
+            if (id != null && !id.isEmpty() && driver.findElements(By.id(id)).size() == 1) {
+                return "//" + tag + "[@id='" + id + "']";
+            }
+            if (name != null && !name.isEmpty() && driver.findElements(By.name(name)).size() == 1) {
+                return "//" + tag + "[@name='" + name + "']";
+            }
+            if (placeholder != null && !placeholder.isEmpty() && driver.findElements(By.xpath("//" + tag + "[@placeholder='" + placeholder + "']")).size() == 1) {
+                return "//" + tag + "[@placeholder='" + placeholder + "']";
+            }
+            if (ariaLabel != null && !ariaLabel.isEmpty() && driver.findElements(By.xpath("//" + tag + "[@aria-label='" + ariaLabel + "']")).size() == 1) {
+                return "//" + tag + "[@aria-label='" + ariaLabel + "']";
+            }
+            if (text != null && !text.isEmpty() && driver.findElements(By.xpath("//" + tag + "[contains(text(),'" + text.trim() + "')]")).size() == 1) {
+                return "//" + tag + "[contains(text(),'" + text.trim() + "')]";
             }
         }
 
-        // XPath to locate the input element (radio button) with the target text
-        String dynamicPositionXPath =
-                "(//*[contains(@type, 'checkbox') and following::text()[contains(., '" + searchText + "')]])[last()]"; // Adjusting for second radio button
-
-        // Append the dynamic position XPath to the generated XPath
-        xpathBuilder.append(dynamicPositionXPath);
-
-        String finalXPath = xpathBuilder.toString().trim();
-        if (finalXPath.isEmpty()) {
-            System.err.println("🚨 Generated XPath is empty.");
-        }
-
-        //System.out.println("Generated XPath: " + finalXPath);
-        return finalXPath;
+        return getAbsoluteXPath(driver, elements.get(0));
     }
 
-
-
-    public String generateDynamicradiobuttonXPath(String fieldText, List<Tag> tags) {
-        String searchText = fieldText.trim();
-        if (searchText.isEmpty()) {
-            System.err.println("🚨 The search text from the BDD step is empty: " + fieldText);
-            return "";
-        }
-
-        StringBuilder xpathBuilder = new StringBuilder();
-
-        // Loop through the tags (keeping this for general tag-based XPath generation)
-        for (Tag tag : tags) {
-            String tagValue = tag.getTagValue();
-            System.out.println("Processing tag: " + tagValue);  // Log the tag
-
-            // Construct the XPath for different attributes
-            String[] attributes = {"placeholder", "title", "aria-label", "name", "text()"};
-
-            for (String attribute : attributes) {
-                String attributeCondition = String.format(
-                        "contains(translate(@%s, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), '%s')",
-                        attribute,
-                        searchText.toLowerCase()
-                );
-                xpathBuilder.append("//").append(tagValue).append("[").append(attributeCondition).append("]").append("[last()]").append(" | ");
-               // System.out.println("Using attribute: " + attribute + " with condition: " + attributeCondition);  // Log the attribute and condition
-            }
-        }
-
-        // XPath to locate the input element (radio button) with the target text
-        String dynamicPositionXPath =
-                "(//*[contains(@type, 'radio') and following::text()[contains(., '" + searchText + "')]])[last()]"; // Adjusting for second radio button
-
-        // Append the dynamic position XPath to the generated XPath
-        xpathBuilder.append(dynamicPositionXPath);
-
-        String finalXPath = xpathBuilder.toString().trim();
-        if (finalXPath.isEmpty()) {
-            System.err.println("🚨 Generated XPath is empty.");
-        }
-
-        //System.out.println("Generated XPath: " + finalXPath);
-        return finalXPath;
+    public static String getAbsoluteXPath(WebDriver driver, WebElement element) {
+        return (String) ((org.openqa.selenium.JavascriptExecutor) driver).executeScript(
+                "function getPath(element) {" +
+                        "if (element.getAttribute('id') !== null && element.getAttribute('id') !== '') {" +
+                        "   return '//' + element.tagName.toLowerCase() + '[@id=\"' + element.getAttribute('id') + '\"]';" +
+                        "}" +
+                        "if (element === document.body) return '/html/' + element.tagName.toLowerCase();" +
+                        "var index = 1, siblings = element.parentNode.childNodes;" +
+                        "for (var i = 0; i < siblings.length; i++) {" +
+                        "    var sibling = siblings[i];" +
+                        "    if (sibling === element) return getPath(element.parentNode) + '/' + element.tagName.toLowerCase() + '[' + index + ']';" +
+                        "    if (sibling.nodeType === 1 && sibling.tagName === element.tagName) index++;" +
+                        "}" +
+                        "return '';" +
+                        "}" +
+                        "return getPath(arguments[0]);", element);
     }
-
-
-    public String generateDynamicselectlassXPath(String fieldText, List<Tag> tags) {
-        String searchText = fieldText.trim();
-        if (searchText.isEmpty()) {
-            System.err.println("🚨 The search text from the BDD step is empty: " + fieldText);
-            return "";
-        }
-
-        StringBuilder xpathBuilder = new StringBuilder();
-
-        // Loop through the tags (keeping this for general tag-based XPath generation)
-        for (Tag tag : tags) {
-            String tagValue = tag.getTagValue();
-            System.out.println("Processing tag: " + tagValue);  // Log the tag
-
-            // Construct the XPath for different attributes
-            String[] attributes = {"placeholder", "title", "aria-label", "name", "text()"};
-
-            for (String attribute : attributes) {
-                String attributeCondition = String.format(
-                        "contains(translate(@%s, 'ABCDEFGHIJKLMNOPQRSTUVWXYZ', 'abcdefghijklmnopqrstuvwxyz'), '%s')",
-                        attribute,
-                        searchText.toLowerCase()
-                );
-                xpathBuilder.append("//").append(tagValue).append("[").append(attributeCondition).append("]").append("[last()]").append(" | ");
-               // System.out.println("Using attribute: " + attribute + " with condition: " + attributeCondition);  // Log the attribute and condition
-            }
-        }
-
-        xpathBuilder.append("//select[contains(@name, '" + searchText + "')]").append("[last()]").append(" | ");
-        xpathBuilder.append("//select[contains(@id, '" + searchText + "')]").append("[last()]").append(" | ");
-
-        String finalXPath = xpathBuilder.toString().trim();
-        if (finalXPath.isEmpty()) {
-            System.err.println("🚨 Generated XPath is empty.");
-        }
-
-       // System.out.println("Generated XPath: " + finalXPath);
-        return finalXPath;
-    }
-
 
 
 }

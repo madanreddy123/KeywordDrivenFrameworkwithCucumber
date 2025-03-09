@@ -9,10 +9,8 @@ import com.pages.GeneralInformation;
 import com.utility.ExcelBDDReader;
 import io.cucumber.datatable.DataTable;
 import io.cucumber.java.en.*;
-import org.openqa.selenium.By;
-import org.openqa.selenium.JavascriptExecutor;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.*;
+
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -98,7 +96,7 @@ public class DataTablesteps {
 
             // If the XPath is invalid or element not found, generate a dynamic XPath
             if (element1 == null && !tags.isEmpty()) {
-                String dynamicXpath = dynamicLocators.generateDynamicXPathforinput(field, tags);
+                String dynamicXpath = dynamicLocators.generateXPath(driver, field);
                 try {
                     element1 = generalInformation.findElement(By.xpath(dynamicXpath));
                     if (element1 != null) {
@@ -172,7 +170,7 @@ public class DataTablesteps {
 
             // If provided XPath is invalid or empty, fallback to dynamic XPath
             if (element == null && !tags.isEmpty()) {
-                String dynamicXpath = dynamicLocators.generateDynamicXPathforclick(field, tags);
+                String dynamicXpath = dynamicLocators.generateXPath(driver, field);
                 try {
                     element = generalInformation.findElement(By.xpath(dynamicXpath));
                     if (element != null) {
@@ -185,10 +183,22 @@ public class DataTablesteps {
 
             // Perform click if element found
             if (element != null) {
-                JavascriptExecutor executor = (JavascriptExecutor) driver;
-                executor.executeScript("arguments[0].style.border='3px solid red';", element);
-                executor.executeScript("arguments[0].click();", element);
+                try {
+                    JavascriptExecutor executor = (JavascriptExecutor) driver;
+                    executor.executeScript("arguments[0].style.border='3px solid red';", element);
+                    executor.executeScript("arguments[0].click();", element);
+                    if (!element.isSelected()) {
+                        element.click();
+                    }
+                }
+                catch (StaleElementReferenceException| ElementNotInteractableException e)
+                {
+                    System.out.println(e.getMessage());
+                }
+
+
                 actions.waitforSeconds(1);
+
             } else {
                 System.err.println("🚨 Could not find element for label: " + field);
             }
@@ -213,12 +223,21 @@ public class DataTablesteps {
             String field = row.get("Fields").trim();
             System.out.println("Selecting checkbox for: " + field);
 
-            String xpath = row.get("Xpath").trim();  // Extract XPath
+            String xpath = row.get("Xpath");
+
+            String  xpathlo = "";
+            try {
+                xpathlo += xpath.trim();
+            }
+            catch (NullPointerException e){
+                System.out.println(e.getMessage());
+            }
+            // Extract XPath
 
             WebElement element = null;
 
             // First, try to use the provided XPath
-            if (!xpath.isEmpty()) {
+            if (!xpathlo.isEmpty()) {
                 try {
                     element = generalInformation.findElement(By.xpath(xpath));
                     if (element != null) {
@@ -231,7 +250,7 @@ public class DataTablesteps {
 
             // If provided XPath is invalid or empty, fallback to dynamic XPath
             if (element == null && !tags.isEmpty()) {
-                String dynamicXpath = dynamicLocators.generateDynamiccheckXPath(field, tags);
+                String dynamicXpath = dynamicLocators.generateXPath(driver, field);
                 try {
                     element = generalInformation.findElement(By.xpath(dynamicXpath));
                     if (element != null) {
@@ -292,7 +311,7 @@ public class DataTablesteps {
 
             // If provided XPath is invalid or empty, fallback to dynamic XPath
             if (element == null && !tags.isEmpty()) {
-                String dynamicXpath = dynamicLocators.generateDynamicradiobuttonXPath(field, tags);
+                String dynamicXpath = dynamicLocators.generateXPath(driver, field);
                 try {
                     element = generalInformation.findElement(By.xpath(dynamicXpath));
                     if (element != null) {
@@ -351,7 +370,7 @@ public class DataTablesteps {
 
         // If provided XPath is invalid or empty, fallback to dynamic XPath
         if (element == null && !tags.isEmpty()) {
-            String dynamicXpath = dynamicLocators.generateDynamicXPathforclick(field, tags);
+            String dynamicXpath = dynamicLocators.generateXPath(driver, field);
             try {
                 element = generalInformation.findElement(By.xpath(dynamicXpath));
                 if (element != null) {
@@ -374,7 +393,7 @@ public class DataTablesteps {
 
         // Now select the option based on argument
         if (!tags.isEmpty()) {
-            String dynamicXpath = dynamicLocators.generateDynamicXPathforclick(arg0, tags);
+            String dynamicXpath = dynamicLocators.generateXPath(driver, field);
             try {
                 element = generalInformation.findElement(By.xpath(dynamicXpath));
                 if (element != null) {
