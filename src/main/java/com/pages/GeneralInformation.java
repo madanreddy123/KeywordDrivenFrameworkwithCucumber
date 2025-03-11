@@ -30,7 +30,7 @@ public class GeneralInformation {
     static String bddStep;
     static String xpath;
    static String additionalXpath;
-  static   String inputData;
+   static   String inputData;
 
     /**
      * Generate a dynamic XPath based on BDD step text.

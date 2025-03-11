@@ -19,6 +19,18 @@ public enum StepKeyword {
     UNKNOWN(); // Default case
 
     private final List<String> keywordPatterns;
+    private static final JLanguageTool langTool;
+
+    // Static block for initializing the LanguageTool once
+    static {
+        JLanguageTool tempTool = null;
+        try {
+            tempTool = new JLanguageTool(new AmericanEnglish());
+        } catch (Exception e) {
+            System.err.println("Error initializing LanguageTool: " + e.getMessage());
+        }
+        langTool = tempTool;
+    }
 
     StepKeyword(String... keywordPatterns) {
         this.keywordPatterns = Arrays.asList(keywordPatterns);
@@ -40,11 +52,13 @@ public enum StepKeyword {
             }
         }
 
-        // Apply spelling correction using LanguageTool
-        try {
-            bddStep = correctSpelling(bddStep);
-        } catch (IOException e) {
-            System.err.println("Error in spell checking: " + e.getMessage());
+        // Apply spelling correction if LanguageTool is available
+        if (langTool != null) {
+            try {
+                bddStep = correctSpelling(bddStep);
+            } catch (IOException e) {
+                System.err.println("Error in spell checking: " + e.getMessage());
+            }
         }
 
         // Check again after spell correction
@@ -59,11 +73,13 @@ public enum StepKeyword {
         return UNKNOWN;
     }
 
-    // Method to correct spelling errors using LanguageTool
-    private static String correctSpelling(String input) throws IOException {
-        JLanguageTool langTool = new JLanguageTool(new AmericanEnglish());
-        List<RuleMatch> matches = langTool.check(input);
+    // Thread-safe method to correct spelling errors using LanguageTool
+    private static synchronized String correctSpelling(String input) throws IOException {
+        if (langTool == null) {
+            return input; // Return the original input if spell checker is unavailable
+        }
 
+        List<RuleMatch> matches = langTool.check(input);
         StringBuilder correctedText = new StringBuilder(input);
         int offset = 0;
 
