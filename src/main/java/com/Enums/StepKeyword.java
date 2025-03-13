@@ -42,19 +42,43 @@ public enum StepKeyword {
 
     public static StepKeyword fromBDDStep(String bddStep) {
         String normalizedStep = bddStep.trim().toLowerCase();
-        List<String> words = Arrays.asList(normalizedStep.split("\\s+"));
+
+        // Extract only words outside of quotes
+        StringBuilder cleanedStep = new StringBuilder();
+        boolean insideQuotes = false;
+        char prevChar = 0;
+
+        // Iterate over the characters to remove quoted content but keep unquoted ones
+        for (char c : normalizedStep.toCharArray()) {
+            if (c == '"' || c == '\'') {
+                // Handle quote toggle
+                if (prevChar != '\\') {
+                    insideQuotes = !insideQuotes;
+                    continue; // Skip the quote itself
+                }
+            }
+            if (!insideQuotes) {
+                cleanedStep.append(c); // Add the character only if it's outside quotes
+            }
+            prevChar = c;
+        }
+
+        // Now process the unquoted cleaned step
+        List<String> words = Arrays.asList(cleanedStep.toString().trim().split("\\s+"));
         PriorityQueue<StepKeyword> matchedKeywords = new PriorityQueue<>(
                 Comparator.comparingInt(keywordPriority::get).reversed()
         );
 
+        // Match using keywordMap
         for (String key : keywordMap.keySet()) {
             if (words.contains(key)) {
                 matchedKeywords.add(keywordMap.get(key));
             }
         }
 
+        // Match using regex patterns
         for (Map.Entry<Pattern, StepKeyword> entry : regexKeywordMap.entrySet()) {
-            if (entry.getKey().matcher(normalizedStep).find()) {
+            if (entry.getKey().matcher(cleanedStep.toString()).find()) {
                 matchedKeywords.add(entry.getValue());
             }
         }
